@@ -1,0 +1,14 @@
+{
+	"gatewayId":"012345012345",
+	"apikey": "testApikey",
+	"reportInterval": 60,
+	"sensors": [
+		{
+			"id": "012345012345-0"
+		},
+		{
+			"id": "012345012345-2"
+		}
+	],
+	"discoverable": true
+}
