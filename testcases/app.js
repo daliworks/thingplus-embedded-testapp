@@ -1,6 +1,5 @@
 var _ = require('lodash');
 var async = require('async');
-var fs = require('fs');
 var TcMqtt = require('./mqtt.js');
 
 var TOPIC_GW_ID_INDEX = 0;
@@ -8,6 +7,7 @@ var TOPIC_SENSOR_ID_INDEX = 2;
 var TOPIC_GW_STATUS_INDEX = 1;
 var TOPIC_SENSOR_STATUS_PREFIX_INDEX = 1;
 var TOPIC_SENSOR_STATUS_INDEX = 3;
+var TOPIC_MQTT_STATUS_INDEX = 2;
 var TOPIC_RES_INDEX = 1;
 
 function makeStatusJson(id, value, timeout) {
@@ -41,6 +41,14 @@ function statusParse(cb, topicString, payloadString, id) {
     cb && cb(null, message, 'status');
     return message;
   });
+}
+
+function mqttStatusParse(cb, topicString, payloadString) {
+  var payload = payloadString.split(',');
+
+  var message = {};
+  message['mqttStatus'] = payloadString.toString();
+  return cb && cb(null, message);
 }
 
 function makeValueJson(id, values) {
@@ -117,16 +125,11 @@ function responseParse(cb, topicString, payloadString) {
   return cb && cb(null, message);
 }
 
-function Testcases(configFile) {
-  try {
-    this.hardwareInfo = JSON.parse(fs.readFileSync(configFile, 'utf8'));
-  }
-  catch (e) {
-    throw e;
-  }
-
-  this.mqtt = new TcMqtt(configFile);
+function Testcases(config) {
+  this.hardwareInfo = config;
+  this.mqtt = new TcMqtt(config);
   this.errorMqttMessage = [];
+  this.mqttMessage = [];
 }
 
 function tcError(cb, reason, topic, payload) {
@@ -141,6 +144,8 @@ function tcError(cb, reason, topic, payload) {
 
 Testcases.prototype.mqttParse = function (topicString, payload, time, cb) {
   var that = this;
+
+  this.mqttMessage.push({'topic': topicString, 'payload': payload});
 
   /* start of internal function */
   function _postParsingCb(err, topic, payload) {
@@ -174,8 +179,12 @@ Testcases.prototype.mqttParse = function (topicString, payload, time, cb) {
 
        return statusParse(_postParsingCb, topicString, payload, topic[statusIndex -1]);
      }
-     else
-         return tcError(_postParsingCb, 'status topic error', topicString, payload);
+     else if (statusIndex === TOPIC_MQTT_STATUS_INDEX) {
+       return mqttStatusParse(_postParsingCb, topicString, payload);
+     }
+     else {
+       return tcError(_postParsingCb, 'status topic error', topicString, payload);
+     }
   }
   else if (_.last(topic) === 'res' && _.indexOf(topic, 'res') === TOPIC_RES_INDEX) {
     return responseParse(_postParsingCb, topicString, payload);
@@ -189,6 +198,10 @@ Testcases.prototype.mqttParse = function (topicString, payload, time, cb) {
   else
     return tcError(_postParsingCb, 'unknown topic', topicString, payload);
 };
+
+Testcases.prototype.getMqttMessage = function () {
+  return this.mqttMessage;
+}
 
 Testcases.prototype.setErrorMqttMessage = function (topic, payload, time, reason) {
   this.errorMqttMessage.push( {

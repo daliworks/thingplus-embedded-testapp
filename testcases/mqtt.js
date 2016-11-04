@@ -1,26 +1,20 @@
 var _ = require('lodash');
 var async = require('async');
-var callerId = require('caller-id');
-var fs = require('fs');
 
 var TC_SENSOR_VALUE_PREFIX = 'tcValue-'
 var TC_STATUS_PREFIX = 'tcStatus-'
 
-function isContain (expect, actual) {
-  var match = false;
-  actual = actual.toLowerCase();
+function logStartTest(tcName) {
+  console.log('[TESTING] ' + tcName);
+}
 
-  _.forEach(expect, function (exp) {
-    if (exp.toLowerCase() === actual) {
-      match = true;
-    }
-  });
-
-  return match;
-};
-
-function isNumerical(numericalString) {
-  return numericalString.match(/^\d+$/g)
+function logTestResult(result, reason) {
+  if (result) {
+    console.log('\t PASS');
+  }
+  else {
+    console.log('\t FAIL. ' + reason);
+  }
 }
 
 function isValidId(hardwareInfo, id) {
@@ -40,55 +34,57 @@ function isValidId(hardwareInfo, id) {
 function sensorIdsInit(hardwareInfo) {
   var sensorIds = [];
   _.forEach(hardwareInfo.sensors, function (sensor) {
-    sensorIds.push(sensor.id);
+    if (sensor.type === 'sensor') {
+      sensorIds.push(sensor.id);
+    }
   });
   return sensorIds;
 }
 
 function statusIdsInit(hardwareInfo) {
   var statusIds = [];
-  statusIds.push(hardwareInfo.gatewayId);
-  statusIds.push(sensorIdsInit(hardwareInfo));
 
-  return _.flatten(statusIds);
+  _.forEach(hardwareInfo.sensors, function (sensor) {
+    statusIds.push(sensor.id);
+  });
+
+  statusIds.push(hardwareInfo.gatewayId);
+
+  return statusIds;
 }
 
 function isStatusValid(s, cb) {
-  if (!isContain(['on', 'off'], s.value)) {
-    return cb(false, 'VALUE ERROR(' + s.value + ')');
+  if (!_.includes(['on', 'off'], s.value.toLowerCase())) {
+    return cb(false, 'STATUS ERROR(' + s.value + ')');
   }
 
-  if (!isNumerical(s.timeout)) {
+  // STATUS는 미래시간일 경우 FALSE
+  // 과거 시간도 X 시간 이전이면 FALSE
+  // isNaN + isUndefined  + isNull 조합으로 수정
+  if (s.timeout && isNaN(s.timeout)) {
     return cb(false, 'TIMEOUT ERROR(' + s.timeout + ')');
   }
 
   cb(true);
 }
 
-function isValueValid (sensorValue, validSensorValueCb) {
-  function __isValidValue(values, validValuecb) {
-    async.each(values, function (value, _asyncDone) {
-      if (!isNumerical(value.t)) {
-        return _asyncDone('TIME ERROR(' + value.t + ')');
-      }
+function isValueValid (values, validValuecb) {
+  async.each(values, function (value, _asyncDone) {
+    if (value.t && isNaN(value.t)) {
+      return _asyncDone('TIME ERROR(' + value.t + ')');
+    }
 
-      _asyncDone();
-    },
-    function (err) {
-      validValuecb(!err, err);
-    });
-  } 
+    //TODO FIXME VALUE CHECK HERE AFTER SENSERTYPE AVAIL
 
-  __isValidValue(sensorValue.value, validSensorValueCb);
+    _asyncDone();
+  },
+  function (err) {
+    validValuecb(!err, err);
+  });
 }
 
-function TcMqtt (configFile) {
-  try {
-    this.hardwareInfo = JSON.parse(fs.readFileSync(configFile, 'utf8'));
-  }
-  catch (e) {
-    throw e;
-  }
+function TcMqtt (config) {
+  this.hardwareInfo = config
 
   this.sensorValueIds = sensorIdsInit(this.hardwareInfo);
   this.statusIds = statusIdsInit(this.hardwareInfo);
@@ -108,8 +104,9 @@ function TcMqtt (configFile) {
    { "tcStatus-012345012345-0": []},
    { "tcApikey": []},
    { "tcGatewayId": [
-    {"result": true, "time": ...},
-    {"result": false, "reason": ..., "time"}]}
+      {"result": true, "time": ...},
+      {"result": false, "reason": ..., "time"}
+    ]}
    },
 */
 
@@ -126,8 +123,15 @@ TcMqtt.prototype.generation = function () {
 }
 
 TcMqtt.prototype.equal = function (expect, actual, time, cb) {
-  var tcName = callerId.getData().methodName;
-  var result = expect === actual;
+  var result = _.isEqual(expect, actual);
+  var reason;
+
+  if (!result) {
+    reason = 'expect:'+ expect +', actual:' + actual;
+  }
+
+  return cb && cb (result, reason);
+
 
   if (result) {
     this.historySet(tcName, result, time);
@@ -140,54 +144,54 @@ TcMqtt.prototype.equal = function (expect, actual, time, cb) {
 }
 
 TcMqtt.prototype.statuses = function (statuses, time, raw, cb) {
-  var r = true;
   var that = this;
 
   async.each(statuses, function (status, asyncDone) {
-    if (!isContain(that.statusIds, status.id)) {
-      r = false;
+    var tcName;
+
+    if (!_.includes(that.statusIds, status.id)) {
 
       that.errorIdSet(status.id, time, raw);
       return asyncDone();
     }
 
-    var tcName = TC_STATUS_PREFIX + status.id;
+    tcName = TC_STATUS_PREFIX + status.id;
+    logStartTest(tcName);
     that[tcName](status, function (result, reason) {
-        if (result) {
-          that.historySet(tcName, result, time, raw);
-        }
-        else {
-          r = false;
-          that.historySet(tcName, result, time, reason, raw);
-        }
-
+        that.historySet(tcName, result, time, reason, raw);
         asyncDone();
       });
     },
     function (err) {
-      cb(r);
+      cb && cb();
   });
 };
 
 TcMqtt.prototype.sensorValues = function (values, time, raw, cb) {
-  var r = true;
   var that = this;
 
+  console.log(values);
   async.each(values, function (value, asyncDone) {
-    if (!isContain(that.sensorValueIds, value.id)) {
-      r = false;
+    var tcName;
 
+    if (!_.includes(that.sensorValueIds, value.id)) {
       that.errorIdSet(value.id, time, raw);
+      console.log('errorId');
       return asyncDone();
     }
 
-    var tcName = TC_SENSOR_VALUE_PREFIX + value.id;
+    tcName = TC_SENSOR_VALUE_PREFIX + value.id;
+    logStartTest(tcName);
+    if (!that[tcName] && typeof that[tcName] !== 'function') {
+      console.log('not function');
+      return asyncDone();
+    }
+
     that[tcName](value, function (result, reason) {
         if (result) {
           that.historySet(tcName, result, time, raw);
         }
         else {
-          r = false;
           that.historySet(tcName, result, time, reason, raw);
         }
 
@@ -195,38 +199,64 @@ TcMqtt.prototype.sensorValues = function (values, time, raw, cb) {
       });
     },
     function (err) {
-      cb(r);
+      cb && cb();
   });
 }
 
 TcMqtt.prototype.tcGatewayId = function (gatewayId, time, cb) {
-  this.equal(this.hardwareInfo.gatewayId, gatewayId, time, cb);
+  logStartTest('tcGatewayId');
+
+  this.equal(this.hardwareInfo.gatewayId, gatewayId, time, function (result, reason){
+    this.historySet('tcGatewayId', result, time, reason);
+    cb && cb();
+  }.bind(this));
 };
 
 TcMqtt.prototype.tcApikey = function (apikey, time, cb) {
-  this.equal(this.hardwareInfo.apikey, apikey, time, cb);
+  logStartTest('tcApikey');
+
+  this.equal(this.hardwareInfo.apikey, apikey, time, function (result, reason){
+    this.historySet('tcApikey', result, time, reason);
+    cb && cb();
+  }.bind(this));
 };
 
 TcMqtt.prototype.tcCleanSession = function (cleanSession, time, cb) {
-  this.equal(true, cleanSession, time, cb);
+  logStartTest('tcCleanSession');
+
+  this.equal(true, cleanSession, time, function (result, reason){
+    this.historySet('tcCleanSession', result, time, reason);
+    cb && cb();
+  }.bind(this));
 };
 
 TcMqtt.prototype.tcWillMessage = function (willMessage, time, cb) {
+  logStartTest('tcWillMessage');
+
   var expectWill = {
     'topic': 'v/a/g/' + this.hardwareInfo.gatewayId + '/mqtt/status',
-    'payload': 'err',
+    'payload': new Buffer('err'),
+    'qos': 1,
     'retain': true
   };
 
-  this.equal(expectWill, willMessage, time, cb);
+  this.equal(expectWill, willMessage, time, function (result, reason){
+    this.historySet('tcWillMessage', result, time, reason);
+    cb && cb();
+  }.bind(this));
 };
 
 TcMqtt.prototype.tcKeepalive = function (keepalive, time, cb) {
+  logStartTest('tcKeepalive');
+
   var MAX_KEEPALIVE = 60 * 10;
   var expectation = this.hardwareInfo.reportInterval > MAX_KEEPALIVE ? 
-    MAX_KEEPALIVE : this.hardwareInfo.reportInterval;
+    MAX_KEEPALIVE : this.hardwareInfo.reportInterval * 2;
 
-  return this.equal(expectation, keepalive, time, cb);
+  this.equal(expectation, keepalive, time, function (result, reason){
+    this.historySet('tcKeepalive', result, time, reason);
+    cb && cb();
+  }.bind(this));
 };
 
 TcMqtt.prototype.historyGet = function (tcName) {
@@ -244,6 +274,7 @@ TcMqtt.prototype.historySet = function (tcName, result, time, reason, raw) {
     time = new Date();
   }
 
+  logTestResult(result, reason);
   if (result) {
     this.history[tcName].push({'result': result, 'time':time});
   }

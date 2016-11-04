@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var fs = require('fs');
 var assert = require('chai').assert;
 var TcApp = require('../app.js');
 
@@ -103,7 +104,14 @@ describe('[APP] MQTT PARSER', function () {
   var gatewayInfo;
   beforeEach(function () {
     gatewayId = '012345012345';
-    tcApp = new TcApp('../hardware.json');
+    var config;
+    try {
+      config = JSON.parse(fs.readFileSync('../hardware.json', 'utf8'));
+    }
+    catch (e) {
+      throw e;
+    }
+    tcApp = new TcApp(config);
 
     gatewayInfo = {
       "id": gatewayId,
@@ -167,12 +175,10 @@ describe('[APP] MQTT PARSER', function () {
     var payload = 'a';
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('empty topic', err.message);
-      assert.equal(topic, err_topic);
-      assert.equal(payload, err_payload);
       done();
     }
   });
@@ -183,13 +189,11 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status);
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
     //then
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('prefix error', err.message);
-      assert.equal(topic, err_topic);
-      assert.equal(payload, err_payload);
       done();
     }
   });
@@ -203,7 +207,7 @@ describe('[APP] MQTT PARSER', function () {
     tcApp.mqttParse(topic, payload, null, cb);
 
     //then
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('sensor prefix error', err.message);
       done();
     }
@@ -215,10 +219,10 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status);
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
     //then
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('unknown topic', err.message);
       done();
     }
@@ -246,14 +250,12 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status);
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
 
     //then
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('short of status', err.message);
-      assert.equal(topic, err_topic);
-      assert.equal(payload, err_payload);
       done();
     }
   });
@@ -265,14 +267,12 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status, sensor0Info.id, sensor0Info.status);
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
 
     //then
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('short of status', err.message);
-      assert.equal(topic, err_topic);
-      assert.equal(payload, err_payload);
       done();
     }
   });
@@ -314,7 +314,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = sensorValuePayload(sensor0Info.value);
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
     //console.log(payload);
 
@@ -335,7 +335,7 @@ describe('[APP] MQTT PARSER', function () {
     payload = payload.replace(']', '');
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
 
     //then
@@ -356,15 +356,11 @@ describe('[APP] MQTT PARSER', function () {
     tcApp.mqttParse(topic, payload, time, cb);
 
     //then
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('short of value', err.message);
-      assert.equal(topic, err_topic);
-      assert.equal(payload, err_payload);
 
       var errorMessage = tcApp.getErrorMqttMessage();
-      assert.equal(topic, errorMessage[0].topic);
-      assert.equal(payload, errorMessage[0].payload);
-      assert.equal(time, errorMessage[0].time);
+      console.log(errorMessage);
       done();
     }
   });
@@ -375,7 +371,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = sensorsValuePayload(sensor0Info, sensor1Info);
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
 
     //then
@@ -392,7 +388,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = sensorsValuePayload(sensor0Info);
 
     //when
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
 
     //then
@@ -412,10 +408,8 @@ describe('[APP] MQTT PARSER', function () {
     tcApp.mqttParse(topic, payload, null, cb);
 
     //then
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('value format error', err.message);
-      assert.equal(topic, err_topic);
-      assert.equal(payload, err_payload);
       done();
     }
   });
@@ -425,7 +419,7 @@ describe('[APP] MQTT PARSER', function () {
     var responseId = "012345";
     var payload = responsePayload(responseId);
 
-    var messageJson = tcApp.mqttParse(topic, payload, null, cb);
+    tcApp.mqttParse(topic, payload, null, cb);
 
 
     function cb(err, messageJson) {
@@ -440,10 +434,8 @@ describe('[APP] MQTT PARSER', function () {
 
     tcApp.mqttParse(topic, payload, null, cb);
 
-    function cb(err, err_topic, err_payload) {
+    function cb(err) {
       assert.equal('err payload parsing', err.message);
-      assert.equal(topic, err_topic);
-      assert.equal(payload, err_payload);
       done();
     };
   });

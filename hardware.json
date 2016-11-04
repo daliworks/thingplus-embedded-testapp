@@ -1,14 +1,18 @@
 {
-	"gatewayId":"012345012345",
-	"apikey": "testApikey",
+	"gatewayId":"90a2da0fc2d8",
+	"apikey": "nOA0Z20kLHVp55tWW4a7kD1D52w=",
 	"reportInterval": 60,
 	"sensors": [
 		{
-			"id": "012345012345-0"
+			"id": "led-90a2da0fc2d8-0",
+			"type": "actuator"
 		},
 		{
-			"id": "012345012345-2"
+			"id": "temperature-90a2da0fc2d8-0",
+			"type": "sensor"
 		}
 	],
-	"discoverable": true
+	"discoverable": true,
+	"key": "node_modules/mosca/test/secure/tls-key.pem",
+	"cert": "node_modules/mosca/test/secure/tls-cert.pem"
 }

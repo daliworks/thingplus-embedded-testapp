@@ -1,3 +1,4 @@
+var fs = require('fs');
 var _ = require('lodash');
 var assert = require('chai').assert;
 var TcMqtt = require('../mqtt.js');
@@ -58,15 +59,23 @@ function sensor1Value() {
 
 describe('[MQTT] TC GENERATION', function () {
   it ('', function (done) {
-    var tcMqtt = new TcMqtt('../hardware.json');
+    var config;
+    try {
+      config = JSON.parse(fs.readFileSync('../hardware.json', 'utf8'));
+    }
+    catch (e) {
+      throw e;
+    }
+    var tcMqtt = new TcMqtt(config);
     assert.equal('function', typeof tcMqtt["tcValue-012345012345-0"]);
     done();
   });
 });
 
 describe('[MQTT] TC', function () {
+  var config;
   var dummyRaw = {'topic': 'v/a/g/dummpyTopic', 'payload': 'dummyPayload'};
-  var tcMqtt = new TcMqtt('../hardware.json');
+  var tcMqtt = new TcMqtt(JSON.parse(fs.readFileSync('../hardware.json', 'utf8')));
   var gatewayId;
   var gatewayInfo;
 
@@ -89,9 +98,7 @@ describe('[MQTT] TC', function () {
     tcMqtt[name](value, null, cb);
 
     //then
-    function cb(err, result, testedData) {
-      assert.equal(true, result)
-      assert.equal(value, testedData);
+    function cb() {
       done();
     }
   }
@@ -101,9 +108,7 @@ describe('[MQTT] TC', function () {
     tcMqtt[name](value, null, cb);
 
     //then
-    function cb(err, result, testedData) {
-      assert.equal(false, result)
-      assert.equal(value, testedData);
+    function cb() {
       done();
     }
   }
@@ -189,7 +194,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result, testedData) {
-      assert.equal(true, result);
       done();
     }
   });
@@ -204,7 +208,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(false, result);
       done();
     }
   });
@@ -218,7 +221,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(false, result);
       done();
     }
   });
@@ -236,7 +238,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(true, result);
       done();
     }
   });
@@ -248,7 +249,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(true, result);
       done();
     }
   });
@@ -262,7 +262,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(false, result);
       done();
     }
   });
@@ -276,7 +275,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(false, result);
       done();
     }
   });
@@ -292,7 +290,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(false, result);
       done();
     }
   });
@@ -306,7 +303,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(true, result);
       done();
     }
   });
@@ -320,7 +316,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(true, result);
       done();
     }
   });
@@ -335,7 +330,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(false, result);
       done();
     }
   });
@@ -350,7 +344,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      assert.equal(false, result);
       console.log(tcMqtt.historyGet());
       done();
     }

@@ -76,10 +76,11 @@ function errorIds() {
 
 describe('[REPORT]', function () {
   it ('success', function (done) {
-    reporter(mqttErrHistory(), errorIds(), mqttMessage(), mqttParsingErr(), done);
+    reporter(true, mqttMessage(), mqttParsingErr, errorIds(), mqttErrHistory(), done);
+
   });
 
   it ('All Message Parsed', function (done) {
-    reporter(mqttSuccessHistory(), null, mqttMessage(), null, done);
+    reporter(true, mqttMessage(), null, mqttSuccessHistory(), null, done);
   });
 });
