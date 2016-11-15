@@ -1,80 +1,155 @@
-var _ = require('lodash');
-var fs = require('fs');
-var mosca = require('./mosca/moscaServer.js');
-var Tc = require('./testcases/app.js');
-var report = require('./reporter.js');
+#!/usr/bin/env node
+'use strict';
+
+var _ = require('lodash'),
+    fs = require('fs'),
+    logger = require('log4js').getLogger('main');
+
+var mosca = require('./mosca/moscaServer.js'),
+    Tc = require('./testcases/app.js'),
+    report = require('./reporter.js');
 
 var CONFIG_FILE = 'hardware.json';
 
-var config;
-try {
-  config = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+var mqttBroker,
+    testcases,
+    mqttConnected = false;
+
+function loadConfig() {
+  var config, file;
+  
+  if(fs.existsSync(CONFIG_FILE)) {
+    file = fs.readFileSync(CONFIG_FILE, 'utf8');
+
+    try {
+      file = fs.readFileSync(CONFIG_FILE, 'utf8');
+      config = JSON.parse(file);
+
+      logger.info('[loadConfig] config loading file success. config=', config);
+    }
+    catch (e) {
+      logger.error('[loadConfig] config json pasing failed. error=', e);
+      // throw e;
+    }
+  } else {
+    logger.error('[loadConfig] file not found. ', CONFIG_FILE);
+  }
+
+  return config;
 }
-catch (e) {
-  throw e;
+
+function createTestCase(config) {
+  var tc = new Tc(config);
+  return tc;
 }
 
-var mqttServer;
-var testcases;
-var mqttConnected = false;
+function runMqttBroker(config, tc, cb) {
+  mqttBroker = mosca.start(config);
 
-function start() {
-  testcases = new Tc(config);
-  mqttServer = mosca.start(config);
+  if (!mqttBroker) {
+    logger.error('[runMqttBroker] create failed');
+    return cb && cb('mqttBroker create failed');
+  }
 
-  mqttServer.on('clientConnected', function (client) {
-    console.log('MQTT CONNECTED');
-    mqttConnected = true;
-
+  mqttBroker.on('clientConnected', function (client) {
     var time = new Date();
 
-    testcases.mqtt.tcCleanSession(client.clean, time);
-    testcases.mqtt.tcWillMessage(client.will, time);
-    testcases.mqtt.tcKeepalive(client.keepalive, time);
+    logger.info('[runMqttBroker] MQTT CONNECTED. clinet', client);
+
+    mqttConnected = true;
+
+    tc.mqtt.tcCleanSession(client.clean, time);
+    tc.mqtt.tcWillMessage(client.will, time);
+    tc.mqtt.tcKeepalive(client.keepalive, time);
   });
 
-  mqttServer.on('published', function (packet, client) {
+  mqttBroker.on('published', function (packet, client) {
+    var time = new Date();
+
     if (_.startsWith(packet.topic, '$SYS')) {
       return;
     }
 
-    var time = new Date();
-
-    testcases.mqttParser.parse(packet.topic, packet.payload.toString(), time, function (err, msg) {
+    tc.mqttParser.parse(packet.topic, packet.payload.toString(), time, function (err, msg) {
       if (err) {
-        console.log(err);
+        logger.error('[runMqttBroker/published] mqtt parsing failed. error=', err);
         return;
       }
 
       if (msg.status) {
-        testcases.mqtt.statuses(msg.status);
+        tc.mqtt.statuses(msg.status);
       }
 
       if (msg.sensorValue) {
-        testcases.mqtt.sensorValues(msg.sensorValue);
+        tc.mqtt.sensorValues(msg.sensorValue);
       }
     });
   });
 
-  mqttServer.on('gatewayId', function (gatewayId) {
-    testcases.mqtt.tcGatewayId(gatewayId);
+  mqttBroker.on('gatewayId', function (gatewayId) {
+    tc.mqtt.tcGatewayId(gatewayId);
   });
 
-  mqttServer.on('apikey', function (apikey) {
-    testcases.mqtt.tcApikey(apikey.toString());
+  mqttBroker.on('apikey', function (apikey) {
+    tc.mqtt.tcApikey(apikey.toString());
   });
 
-  mqttServer.on('keepalive', function (keepalive) {
-    testcases.mqtt.tcKeepalive(keepalive);
+  mqttBroker.on('keepalive', function (keepalive) {
+    tc.mqtt.tcKeepalive(keepalive);
   });
-};
 
-function stop() {
-  mosca.stop(mqttServer);
+  return cb && cb();
+}
+
+function runHttpServer(config, tc, cb) {
+
+  return cb && cb();
+}
+
+
+function generateReport() {
   report(mqttConnected, testcases.mqttParser.getMqttMessage(), testcases.mqttParser.getErrorMqttMessage(),
     testcases.mqtt.errorIdGet(), testcases.mqtt.historyGet()
-  ) ;
-  //process.exit();
+  );
+}
+
+
+function start() {
+  var config = loadConfig();
+
+  if (!config) {
+    logger.error('[start] loading config failed');
+    return;
+  }
+
+  testcases = createTestCase(config);
+
+  if (!testcases) {
+    logger.error('[start] create test case failed');
+    return;
+  }
+
+  runMqttBroker(config, testcases, function (err) {
+    if (err) {
+      logger.error('[start] run mqtt broker failed. error=', err);
+    } else {
+      logger.info('[start] run mqtt broker');
+    }
+  });
+  
+  runHttpServer(config, testcases, function (err) {
+    if (err) {
+      logger.error('[start] run http server failed. error=', err);
+    } else {
+      logger.info('[start] run http server');
+    }
+  });
+}
+
+function stop() {
+  mosca.stop(mqttBroker);
+
+  generateReport();
 }
 
 start();

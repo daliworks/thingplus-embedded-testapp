@@ -14,9 +14,11 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "mosca": "file:mosca",
-    "mqtt": "^2.0.1",
+    "chai": "^3.5.0",
+    "colors": "^1.1.2",
+    "log4js": "^1.0.1",
     "mocha": "^3.1.0",
-    "chai": "^3.5.0"
+    "mosca": "file:mosca",
+    "mqtt": "^2.0.1"
   }
 }
