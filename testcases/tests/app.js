@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var fs = require('fs');
 var assert = require('chai').assert;
-var TcApp = require('../app.js');
+var MqttParser = require('../mqtt-parser.js');
 
 function gwStatusTopic(gatewayId) {
   return 'v/a/g/' + gatewayId + '/status';
@@ -99,7 +99,7 @@ function assertStatus(expect, actual) {
 
 describe('[APP] MQTT PARSER', function () {
   var gatewayId;
-  var tcApp;
+  var mqttParser;
   var sensor0Info;
   var gatewayInfo;
   beforeEach(function () {
@@ -111,7 +111,7 @@ describe('[APP] MQTT PARSER', function () {
     catch (e) {
       throw e;
     }
-    tcApp = new TcApp(config);
+    mqttParser = new MqttParser(config);
 
     gatewayInfo = {
       "id": gatewayId,
@@ -175,7 +175,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = 'a';
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     function cb(err) {
       assert.equal('empty topic', err.message);
@@ -189,7 +189,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     //then
     function cb(err) {
@@ -204,7 +204,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = 'aaa';
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     //then
     function cb(err) {
@@ -219,7 +219,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     //then
     function cb(err) {
@@ -234,7 +234,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     //then
    function cb(err, messageJson) {
@@ -250,7 +250,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
 
     //then
@@ -267,7 +267,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status, sensor0Info.id, sensor0Info.status);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
 
     //then
@@ -283,7 +283,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(gatewayInfo.status, sensor0Info.id, sensor0Info.status);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     //then
     function cb(err, messageJson) {
@@ -299,7 +299,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = statusPayload(sensor0Info.status);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     //then
     function cb(err, messageJson) {
@@ -314,7 +314,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = sensorValuePayload(sensor0Info.value);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     //console.log(payload);
 
@@ -335,7 +335,7 @@ describe('[APP] MQTT PARSER', function () {
     payload = payload.replace(']', '');
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
 
     //then
@@ -353,13 +353,13 @@ describe('[APP] MQTT PARSER', function () {
     var time = new Date();
 
     //when 
-    tcApp.mqttParse(topic, payload, time, cb);
+    mqttParser.parse(topic, payload, time, cb);
 
     //then
     function cb(err) {
       assert.equal('short of value', err.message);
 
-      var errorMessage = tcApp.getErrorMqttMessage();
+      var errorMessage = mqttParser.getErrorMqttMessage();
       console.log(errorMessage);
       done();
     }
@@ -371,7 +371,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = sensorsValuePayload(sensor0Info, sensor1Info);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
 
     //then
@@ -388,7 +388,7 @@ describe('[APP] MQTT PARSER', function () {
     var payload = sensorsValuePayload(sensor0Info);
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
 
     //then
@@ -405,7 +405,7 @@ describe('[APP] MQTT PARSER', function () {
     payload =payload.replace('{', '');
 
     //when
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     //then
     function cb(err) {
@@ -419,7 +419,7 @@ describe('[APP] MQTT PARSER', function () {
     var responseId = "012345";
     var payload = responsePayload(responseId);
 
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
 
     function cb(err, messageJson) {
@@ -432,7 +432,7 @@ describe('[APP] MQTT PARSER', function () {
     var topic = responseTopic(gatewayId);
     var payload = 'ERR_JSON: "ERRJSON_STRING,"';
 
-    tcApp.mqttParse(topic, payload, null, cb);
+    mqttParser.parse(topic, payload, null, cb);
 
     function cb(err) {
       assert.equal('err payload parsing', err.message);
@@ -443,11 +443,11 @@ describe('[APP] MQTT PARSER', function () {
 
 describe('[APP] INVALID MQTT MESSAGE SAVE', function () {
   var gatewayId;
-  var tcApp;
+  var mqttParser;
 
   beforeEach(function() {
     gatewayId = '012345012345';
-    tcApp = new TcApp('../hardware.json');
+    mqttParser = new MqttParser('../hardware.json');
   });
 
   afterEach(function () {
@@ -460,10 +460,10 @@ describe('[APP] INVALID MQTT MESSAGE SAVE', function () {
     var time = new Date().getTime();
 
     //when
-    tcApp.setErrorMqttMessage(topic, payload, time);
+    mqttParser.setErrorMqttMessage(topic, payload, time);
 
     //then
-    var errorMessage = tcApp.getErrorMqttMessage();
+    var errorMessage = mqttParser.getErrorMqttMessage();
     assert.equal(topic, errorMessage[0].topic);
     assert.equal(payload, errorMessage[0].payload);
     assert.equal(time, errorMessage[0].time);

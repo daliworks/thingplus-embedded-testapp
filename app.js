@@ -40,7 +40,7 @@ function start() {
 
     var time = new Date();
 
-    testcases.mqttParse(packet.topic, packet.payload.toString(), time, function (err, msg) {
+    testcases.mqttParser.parse(packet.topic, packet.payload.toString(), time, function (err, msg) {
       if (err) {
         console.log(err);
         return;
@@ -71,7 +71,7 @@ function start() {
 
 function stop() {
   mosca.stop(mqttServer);
-  report(mqttConnected, testcases.getMqttMessage(), testcases.getErrorMqttMessage(),
+  report(mqttConnected, testcases.mqttParser.getMqttMessage(), testcases.mqttParser.getErrorMqttMessage(),
     testcases.mqtt.errorIdGet(), testcases.mqtt.historyGet()
   ) ;
   //process.exit();

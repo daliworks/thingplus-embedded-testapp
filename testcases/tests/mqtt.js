@@ -67,8 +67,10 @@ describe('[MQTT] TC GENERATION', function () {
       throw e;
     }
     var tcMqtt = new TcMqtt(config);
-    assert.equal('function', typeof tcMqtt["tcValue-012345012345-0"]);
+    assert.equal('function', typeof tcMqtt["tcStatus-90a2da0fc2d8"]);
+    assert.equal('function', typeof tcMqtt["tcStatus-led-90a2da0fc2d8-0"]);
     done();
+
   });
 });
 
@@ -166,7 +168,7 @@ describe('[MQTT] TC', function () {
     //given
     async.series([
       function (asyncDone) {
-        gatewayId = '012345012345'
+        gatewayId = '90a2da0fc2d8'
         equalitySuccess(asyncDone, 'tcGatewayId', gatewayId);
       },
       function (asyncDone) {
@@ -178,8 +180,9 @@ describe('[MQTT] TC', function () {
         var history = tcMqtt.historyGet('tcGatewayId');
 
         //then
-        assert.equal(true, history[0].result);
+        assert.equal(false, history[0].result);
         assert.equal(false, history[1].result);
+        assert.equal(true, history[2].result);
         done();
       });
   });
@@ -344,7 +347,6 @@ describe('[MQTT] TC', function () {
 
     //then
     function cb(result) {
-      console.log(tcMqtt.historyGet());
       done();
     }
   });

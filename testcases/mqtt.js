@@ -33,19 +33,25 @@ function isValidId(hardwareInfo, id) {
 
 function sensorIdsInit(hardwareInfo) {
   var sensorIds = [];
-  _.forEach(hardwareInfo.sensors, function (sensor) {
-    if (sensor.type === 'sensor') {
-      sensorIds.push(sensor.id);
-    }
+
+  _.forEach(hardwareInfo.devices, function (device) {
+    _.forEach(device.sensors, function (sensor) {
+      if (sensor.category === 'sensor') {
+        sensorIds.push(sensor.id);
+      }
+    });
   });
+
   return sensorIds;
 }
 
 function statusIdsInit(hardwareInfo) {
   var statusIds = [];
 
-  _.forEach(hardwareInfo.sensors, function (sensor) {
-    statusIds.push(sensor.id);
+  _.forEach(hardwareInfo.devices, function (device) {
+    _.forEach(device.sensors, function (sensor) {
+        statusIds.push(sensor.id);
+    });
   });
 
   statusIds.push(hardwareInfo.gatewayId);
@@ -60,7 +66,6 @@ function isStatusValid(s, cb) {
 
   // STATUS는 미래시간일 경우 FALSE
   // 과거 시간도 X 시간 이전이면 FALSE
-  // isNaN + isUndefined  + isNull 조합으로 수정
   if (s.timeout && isNaN(s.timeout)) {
     return cb(false, 'TIMEOUT ERROR(' + s.timeout + ')');
   }
@@ -75,7 +80,6 @@ function isValueValid (values, validValuecb) {
     }
 
     //TODO FIXME VALUE CHECK HERE AFTER SENSERTYPE AVAIL
-
     _asyncDone();
   },
   function (err) {
@@ -170,20 +174,17 @@ TcMqtt.prototype.statuses = function (statuses, time, raw, cb) {
 TcMqtt.prototype.sensorValues = function (values, time, raw, cb) {
   var that = this;
 
-  console.log(values);
   async.each(values, function (value, asyncDone) {
     var tcName;
 
     if (!_.includes(that.sensorValueIds, value.id)) {
       that.errorIdSet(value.id, time, raw);
-      console.log('errorId');
       return asyncDone();
     }
 
     tcName = TC_SENSOR_VALUE_PREFIX + value.id;
     logStartTest(tcName);
     if (!that[tcName] && typeof that[tcName] !== 'function') {
-      console.log('not function');
       return asyncDone();
     }
 
@@ -275,6 +276,7 @@ TcMqtt.prototype.historySet = function (tcName, result, time, reason, raw) {
   }
 
   logTestResult(result, reason);
+
   if (result) {
     this.history[tcName].push({'result': result, 'time':time});
   }
