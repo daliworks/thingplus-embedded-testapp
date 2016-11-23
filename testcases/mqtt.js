@@ -4,10 +4,21 @@ var async = require('async');
 var TC_SENSOR_VALUE_PREFIX = 'tcValue-'
 var TC_STATUS_PREFIX = 'tcStatus-'
 
+/**
+ * 
+ * 
+ * @param {any} tcName
+ */
 function logStartTest(tcName) {
   console.log('[TESTING] ' + tcName);
 }
 
+/**
+ * 
+ * 
+ * @param {any} result
+ * @param {any} reason
+ */
 function logTestResult(result, reason) {
   if (result) {
     console.log('\t PASS');
@@ -17,6 +28,13 @@ function logTestResult(result, reason) {
   }
 }
 
+/**
+ * 
+ * 
+ * @param {any} hardwareInfo
+ * @param {any} id
+ * @returns
+ */
 function isValidId(hardwareInfo, id) {
   if (hardwareInfo.gatewayId === id)
     return true;
@@ -31,6 +49,12 @@ function isValidId(hardwareInfo, id) {
   return match;
 }
 
+/**
+ * 
+ * 
+ * @param {any} hardwareInfo
+ * @returns
+ */
 function sensorIdsInit(hardwareInfo) {
   var sensorIds = [];
 
@@ -45,6 +69,12 @@ function sensorIdsInit(hardwareInfo) {
   return sensorIds;
 }
 
+/**
+ * 
+ * 
+ * @param {any} hardwareInfo
+ * @returns
+ */
 function statusIdsInit(hardwareInfo) {
   var statusIds = [];
 
@@ -59,6 +89,13 @@ function statusIdsInit(hardwareInfo) {
   return statusIds;
 }
 
+/**
+ * 
+ * 
+ * @param {any} s
+ * @param {any} cb
+ * @returns
+ */
 function isStatusValid(s, cb) {
   if (!_.includes(['on', 'off'], s.value.toLowerCase())) {
     return cb(false, 'STATUS ERROR(' + s.value + ')');
@@ -73,6 +110,12 @@ function isStatusValid(s, cb) {
   cb(true);
 }
 
+/**
+ * 
+ * 
+ * @param {any} values
+ * @param {any} validValuecb
+ */
 function isValueValid (values, validValuecb) {
   async.each(values, function (value, _asyncDone) {
     if (value.t && isNaN(value.t)) {
@@ -87,8 +130,13 @@ function isValueValid (values, validValuecb) {
   });
 }
 
+/**
+ * 
+ * 
+ * @param {any} config
+ */
 function TcMqtt (config) {
-  this.hardwareInfo = config
+  this.hardwareInfo = config;
 
   this.sensorValueIds = sensorIdsInit(this.hardwareInfo);
   this.statusIds = statusIdsInit(this.hardwareInfo);
@@ -114,6 +162,9 @@ function TcMqtt (config) {
    },
 */
 
+/**
+ * 
+ */
 TcMqtt.prototype.generation = function () {
   var that = this;
 
@@ -126,6 +177,15 @@ TcMqtt.prototype.generation = function () {
   });
 }
 
+/**
+ * 
+ * 
+ * @param {any} expect
+ * @param {any} actual
+ * @param {any} time
+ * @param {any} cb
+ * @returns
+ */
 TcMqtt.prototype.equal = function (expect, actual, time, cb) {
   var result = _.isEqual(expect, actual);
   var reason;
@@ -147,6 +207,14 @@ TcMqtt.prototype.equal = function (expect, actual, time, cb) {
   return cb && cb(null, result, actual);
 }
 
+/**
+ * 
+ * 
+ * @param {any} statuses
+ * @param {any} time
+ * @param {any} raw
+ * @param {any} cb
+ */
 TcMqtt.prototype.statuses = function (statuses, time, raw, cb) {
   var that = this;
 
@@ -171,6 +239,14 @@ TcMqtt.prototype.statuses = function (statuses, time, raw, cb) {
   });
 };
 
+/**
+ * 
+ * 
+ * @param {any} values
+ * @param {any} time
+ * @param {any} raw
+ * @param {any} cb
+ */
 TcMqtt.prototype.sensorValues = function (values, time, raw, cb) {
   var that = this;
 
@@ -204,6 +280,13 @@ TcMqtt.prototype.sensorValues = function (values, time, raw, cb) {
   });
 }
 
+/**
+ * 
+ * 
+ * @param {any} gatewayId
+ * @param {any} time
+ * @param {any} cb
+ */
 TcMqtt.prototype.tcGatewayId = function (gatewayId, time, cb) {
   logStartTest('tcGatewayId');
 
@@ -213,6 +296,13 @@ TcMqtt.prototype.tcGatewayId = function (gatewayId, time, cb) {
   }.bind(this));
 };
 
+/**
+ * 
+ * 
+ * @param {any} apikey
+ * @param {any} time
+ * @param {any} cb
+ */
 TcMqtt.prototype.tcApikey = function (apikey, time, cb) {
   logStartTest('tcApikey');
 
@@ -222,6 +312,13 @@ TcMqtt.prototype.tcApikey = function (apikey, time, cb) {
   }.bind(this));
 };
 
+/**
+ * 
+ * 
+ * @param {any} cleanSession
+ * @param {any} time
+ * @param {any} cb
+ */
 TcMqtt.prototype.tcCleanSession = function (cleanSession, time, cb) {
   logStartTest('tcCleanSession');
 
@@ -231,6 +328,13 @@ TcMqtt.prototype.tcCleanSession = function (cleanSession, time, cb) {
   }.bind(this));
 };
 
+/**
+ * 
+ * 
+ * @param {any} willMessage
+ * @param {any} time
+ * @param {any} cb
+ */
 TcMqtt.prototype.tcWillMessage = function (willMessage, time, cb) {
   logStartTest('tcWillMessage');
 
@@ -247,6 +351,13 @@ TcMqtt.prototype.tcWillMessage = function (willMessage, time, cb) {
   }.bind(this));
 };
 
+/**
+ * 
+ * 
+ * @param {any} keepalive
+ * @param {any} time
+ * @param {any} cb
+ */
 TcMqtt.prototype.tcKeepalive = function (keepalive, time, cb) {
   logStartTest('tcKeepalive');
 
@@ -260,6 +371,12 @@ TcMqtt.prototype.tcKeepalive = function (keepalive, time, cb) {
   }.bind(this));
 };
 
+/**
+ * 
+ * 
+ * @param {any} tcName
+ * @returns
+ */
 TcMqtt.prototype.historyGet = function (tcName) {
   //console.log(this.result);
   if (tcName) {
@@ -270,6 +387,15 @@ TcMqtt.prototype.historyGet = function (tcName) {
   }
 };
 
+/**
+ * 
+ * 
+ * @param {any} tcName
+ * @param {any} result
+ * @param {any} time
+ * @param {any} reason
+ * @param {any} raw
+ */
 TcMqtt.prototype.historySet = function (tcName, result, time, reason, raw) {
   if (!time) {
     time = new Date();
@@ -293,10 +419,22 @@ TcMqtt.prototype.historySet = function (tcName, result, time, reason, raw) {
   }
 };
 
+/**
+ * 
+ * 
+ * @param {any} id
+ * @param {any} time
+ * @param {any} raw
+ */
 TcMqtt.prototype.errorIdSet = function (id, time, raw) {
   this.errorId.push({'id': id, 'time': time, 'raw': raw});
 }
 
+/**
+ * 
+ * 
+ * @returns
+ */
 TcMqtt.prototype.errorIdGet = function () {
   return this.errorId;
 }

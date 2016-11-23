@@ -10,10 +10,27 @@ var TOPIC_SENSOR_STATUS_INDEX = 3;
 var TOPIC_MQTT_STATUS_INDEX = 2;
 var TOPIC_RES_INDEX = 1;
 
+/**
+ * 
+ * 
+ * @param {any} id
+ * @param {any} value
+ * @param {any} timeout
+ * @returns
+ */
 function makeStatusJson(id, value, timeout) {
   return {'id': id, 'value': value, 'timeout': timeout};
 }
 
+/**
+ * 
+ * 
+ * @param {any} cb
+ * @param {any} topicString
+ * @param {any} payloadString
+ * @param {any} id
+ * @returns
+ */
 function statusParse(cb, topicString, payloadString, id) {
   var payload = payloadString.split(',');
 
@@ -43,6 +60,14 @@ function statusParse(cb, topicString, payloadString, id) {
   });
 }
 
+/**
+ * 
+ * 
+ * @param {any} cb
+ * @param {any} topicString
+ * @param {any} payloadString
+ * @returns
+ */
 function mqttStatusParse(cb, topicString, payloadString) {
   var payload = payloadString.split(',');
 
@@ -51,6 +76,13 @@ function mqttStatusParse(cb, topicString, payloadString) {
   return cb && cb(null, message);
 }
 
+/**
+ * 
+ * 
+ * @param {any} id
+ * @param {any} values
+ * @returns
+ */
 function makeValueJson(id, values) {
   /* values = [time, value, time , value] */
 
@@ -66,6 +98,15 @@ function makeValueJson(id, values) {
   return {"id": id, "value": value};
 }
 
+/**
+ * 
+ * 
+ * @param {any} cb
+ * @param {any} topicString
+ * @param {any} payloadString
+ * @param {any} id
+ * @returns
+ */
 function sensorValueParse(cb, topicString, payloadString, id) {
   var payloadTemp = payloadString;
   if (!_.startsWith(payloadTemp, '[') && !_.endsWith(payloadTemp, ']')) {
@@ -92,6 +133,14 @@ function sensorValueParse(cb, topicString, payloadString, id) {
   return cb && cb(null, message);
 }
 
+/**
+ * 
+ * 
+ * @param {any} cb
+ * @param {any} topicString
+ * @param {any} payloadString
+ * @returns
+ */
 function sensorsValueParse(cb, topicString, payloadString) {
   try {
     var payload = JSON.parse(payloadString)
@@ -114,6 +163,14 @@ function sensorsValueParse(cb, topicString, payloadString) {
   return cb && cb(null, message);
 }
 
+/**
+ * 
+ * 
+ * @param {any} cb
+ * @param {any} topicString
+ * @param {any} payloadString
+ * @returns
+ */
 function responseParse(cb, topicString, payloadString) {
   try {
     var message = JSON.parse(payloadString);
@@ -125,6 +182,11 @@ function responseParse(cb, topicString, payloadString) {
   return cb && cb(null, message);
 }
 
+/**
+ * 
+ * 
+ * @param {any} config
+ */
 function MqttParser(config) {
   this.hardwareInfo = config;
   this.mqtt = new TcMqtt(config);
@@ -132,6 +194,15 @@ function MqttParser(config) {
   this.mqttMessage = [];
 }
 
+/**
+ * 
+ * 
+ * @param {any} cb
+ * @param {any} reason
+ * @param {any} topic
+ * @param {any} payload
+ * @returns
+ */
 function tcError(cb, reason, topic, payload) {
   if (!cb)
     return;
@@ -142,12 +213,29 @@ function tcError(cb, reason, topic, payload) {
   return cb(err, topic, payload);
 }
 
+/**
+ * 
+ * 
+ * @param {any} topicString
+ * @param {any} payload
+ * @param {any} time
+ * @param {any} cb
+ * @returns
+ */
 MqttParser.prototype.parse = function (topicString, payload, time, cb) {
   var that = this;
 
   this.mqttMessage.push({'topic': topicString, 'payload': payload});
 
   /* start of internal function */
+  /**
+   * 
+   * 
+   * @param {any} err
+   * @param {any} topic
+   * @param {any} payload
+   * @returns
+   */
   function _postParsingCb(err, topic, payload) {
     if (err) {
       that.setErrorMqttMessage(topic, payload, time, err.message);
@@ -199,10 +287,23 @@ MqttParser.prototype.parse = function (topicString, payload, time, cb) {
     return tcError(_postParsingCb, 'unknown topic', topicString, payload);
 };
 
+/**
+ * 
+ * 
+ * @returns
+ */
 MqttParser.prototype.getMqttMessage = function () {
   return this.mqttMessage;
 }
 
+/**
+ * 
+ * 
+ * @param {any} topic
+ * @param {any} payload
+ * @param {any} time
+ * @param {any} reason
+ */
 MqttParser.prototype.setErrorMqttMessage = function (topic, payload, time, reason) {
   this.errorMqttMessage.push( {
     'topic': topic,
@@ -212,6 +313,11 @@ MqttParser.prototype.setErrorMqttMessage = function (topic, payload, time, reaso
   });
 };
 
+/**
+ * 
+ * 
+ * @returns
+ */
 MqttParser.prototype.getErrorMqttMessage = function () {
   return this.errorMqttMessage;
 }

@@ -1,10 +1,28 @@
 var _ = require('lodash');
 var async = require('async');
 var colors = require('colors/safe');
+var open = require('open');
 
-function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTestResult, cb) {
+
+/**
+ * 
+ * 
+ * @param {any} mqttConnected
+ * @param {any} receivedMqttMsg
+ * @param {any} errorMqttMsg
+ * @param {any} errorIds
+ * @param {any} mqttTestResult
+ * @param {any} cb
+ * @returns
+ */
+function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTestResult, restTestResult, cb) {
   var report = {};
 
+  /**
+   * 
+   * 
+   * @param {any} done
+   */
   function errorMqttMsgReport(done) {
     report.mqttMessage = {};
 
@@ -16,6 +34,11 @@ function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTest
     done();
   }
 
+  /**
+   * 
+   * 
+   * @param {any} done
+   */
   function errorIdsReport(done) {
     report.errorIds = {};
     report.errorIds.result = _.size(errorIds) ? "FAIL" : "PASS";
@@ -25,9 +48,20 @@ function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTest
     done();
   }
 
+  /**
+   * 
+   * 
+   * @param {any} done
+   */
   function mqttReport(done) {
     report.mqtt = {};
     async.eachOf(mqttTestResult, function (tcHistory, tcName, asyncDone) {
+      /**
+       * 
+       * 
+       * @param {any} history
+       * @returns
+       */
       var failedHistory = _.filter(tcHistory, function (history) {
         return !history.result;
       });
@@ -64,6 +98,18 @@ function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTest
     });
   }
 
+  function restReport(done) {
+
+    report.rest = restTestResult;
+
+    return done();
+  }
+
+  /**
+   * 
+   * 
+   * @param {any} done
+   */
   function summary(done) {
     report.summary = {};
 
@@ -72,7 +118,7 @@ function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTest
     report.summary.failed = report.mqtt.failed;
     report.summary.na = report.mqtt.na;
 
-    report.summary.result = 'PASS'
+    report.summary.result = 'PASS';
     _.forEach(report, function (r) {
       if (r.result && r.result !== 'PASS') {
         report.summary.result = 'FAIL';
@@ -82,15 +128,20 @@ function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTest
     done();
   }
 
+  /**
+   * 
+   * 
+   * @param {any} done
+   */
   function tcReport(done) {
     console.log(report);
     done();
   }
 
   // START HERE 
-  async.series([errorMqttMsgReport, errorIdsReport, mqttReport, summary, tcReport], cb);
+  async.series([errorMqttMsgReport, errorIdsReport, mqttReport, restReport, summary, tcReport], cb);
 
   return;
 }
 
-module.exports =  report
+module.exports =  report;
