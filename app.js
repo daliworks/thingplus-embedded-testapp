@@ -385,6 +385,11 @@ function stop() {
   httpServer.close();
 
   generateReport();
+
+  setTimeout(function () {
+    logger.info('TC STOP');
+    process.exit(0);
+  }, 1000);  
 }
 
 start();
