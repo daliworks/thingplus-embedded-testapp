@@ -1,0 +1,17 @@
+{
+  "mqtt": {
+    "secure": {
+      "key": "mosca/secure/tls-key.pem",
+      "cert": "mosca/secure/tls-cert.pem"
+    }
+  },
+  "http": {
+    "port": 3000
+  },
+  "gateway": {
+    "id": "90a2da0fc2d8",
+    "apikey": "nOA0Z20kLHVp55tWW4a7kD1D52w=",
+    "reportInterval": 60,
+    "model": "38"
+  }
+}

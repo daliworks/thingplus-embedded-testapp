@@ -1,0 +1,2025 @@
+[
+  {
+    "id": "number",
+    "unit": "",
+    "type": "number",
+    "decimalPlace": 1,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "string",
+    "unit": "",
+    "type": "string",
+    "chart": {
+      "drawable": false,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["last"]
+    },     
+    "category": "sensor"
+  },
+  {
+    "id": "complex",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "series"
+    },
+    "contentType": {
+      "properties": {
+        "0": {
+          "type": "string"
+        },
+        "1": {
+          "type": "string"
+        },
+        "2": {
+          "type": "string"
+        }
+      },
+      "display": ["0", "1", "2"]
+    },
+    "stats": {
+      "funcs": ["last"]
+    },     
+    "category": "sensor"
+  },
+  {
+    "id": "percent",
+    "unit": "%",
+    "type": "number",
+    "decimalPlace": 1,
+    "range": {
+      "min": 0,
+      "max": 100
+    },
+    "minimum": 0,
+    "maximum": 100,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "temperature",
+    "unit": "°C",
+    "type": "number",
+    "decimalPlace": 1,
+    "range": {
+      "min": -273,
+      "max": 300
+    },
+    "minimum": -273,
+    "maximum": 300,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "soilTemperature",
+    "unit": "°C",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": -273,
+      "max": 300
+    },
+    "minimum": -273,
+    "maximum": 300,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },  
+  {
+    "id": "humidity",
+    "unit": "%",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0,
+      "max": 100,
+      "interval": 1
+    },
+    "minimum": 0,
+    "maximum": 100,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "soilMoisture",
+    "unit": "cbar",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "onoff",
+    "unit": "",
+    "type": "boolean",
+    "values": [0, 1],
+    "displayValues": ["off", "on"],
+    "displayImage": "y",
+    "chart": {
+      "drawable": true,
+      "dataType": "event",
+      "yaxis": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "motion",
+    "unit": "",
+    "type": "boolean",
+    "values": [0, 1],
+    "displayValues": ["off", "on"],
+    "displayImage": "y",
+    "chart": {
+      "drawable": true,
+      "dataType": "event",
+      "yaxis": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "door",
+    "unit": "",
+    "type": "boolean",
+    "values": [0, 1],
+    "displayValues": ["closed", "opened"],
+    "displayImage": "y",
+    "chart": {
+      "drawable": true,
+      "dataType": "event",
+      "yaxis": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "parkingStatus",
+    "unit": "lvl",
+    "type": "boolean",
+    "values": [0, 1],
+    "displayValues": ["empty", "occupied"],
+    "displayImage": "y",
+    "chart": {
+      "drawable": true,
+      "dataType": "event",
+      "yaxis": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "sensor"
+  },  
+  {
+    "id": "light",
+    "unit": "lux",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "location",
+    "unit": "°",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "series",
+      "intervalFunc": "last"
+    },
+    "contentType": {
+      "properties": {
+        "lat": {
+          "type": "number",
+          "range": {
+            "min": -90,
+            "max": 90
+          },
+          "minimum": -90,
+          "maximum": 90,
+          "decimalPlace": 6
+        },
+        "lng": {
+          "type": "number",
+          "range": {
+            "min": -180,
+            "max": 180
+          },
+          "minimum": -180,
+          "maximum": 180,
+          "decimalPlace": 6
+        },
+        "alt": {
+          "type": "number"
+        }
+      },
+      "display": ["lat", "lng", "alt"]
+    },
+    "stats": {
+      "funcs": ["last"]
+    },    
+    "category": "sensor"
+  },
+  {
+    "id": "accelerometer",
+    "unit": "m/s²",
+    "type": "object",
+    "chart": {
+      "drawable": true,
+      "dataType": "series",
+      "intervalFunc": "last"
+    },
+    "contentType": {
+      "properties": {
+        "x": {
+          "type": "number",
+          "decimalPlace": 6
+        },
+        "y": {
+          "type": "number",
+          "decimalPlace": 6
+        },
+        "z": {
+          "type": "number",
+          "decimalPlace": 6
+        }
+      },
+      "display": ["x", "y", "z"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "batteryGauge",
+    "unit": "%",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0,
+      "max": 100,
+      "interval": 1
+    },
+    "minimum": 0,
+    "maximum": 100,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "ph",
+    "unit": "pH",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0,
+      "max": 14
+    },
+    "minimum": 0,
+    "maximum": 14,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "co2",
+    "unit": "ppm",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "co",
+    "unit": "ppm",
+    "type": "number",
+    "decimalPlace": 1,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "voc",
+    "unit": "ppm",
+    "type": "number",
+    "decimalPlace": 1,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "power",
+    "unit": "kWh",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series",
+      "cumulative": true
+    },
+    "stats": {
+      "funcs": ["diff"],
+      "cumulative": "y"
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "electricPower",
+    "unit": "W",
+    "type": "number",
+    "decimalPlace": 3,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series",
+      "cumulative": true
+    },
+    "stats": {
+      "funcs": ["max"]
+    },
+    "category": "sensor"
+  },  
+  {
+    "id": "electricEnergy",
+    "unit": "kWh",
+    "type": "number",
+    "decimalPlace": 3,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series",
+      "cumulative": true
+    },
+    "stats": {
+      "funcs": ["diff"],
+      "cumulative": "y"
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "current",
+    "unit": "A",
+    "type": "number",
+    "decimalPlace": 3,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "voltage",
+    "unit": "V",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "frequency",
+    "unit": "Hz",
+    "type": "number",
+    "decimalPlace": 1,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "powerFactor",
+    "unit": "pf",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "max": 1,
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "powerControllerState",
+    "unit": "",
+    "type": "boolean",
+    "values": [0, 1, 2, 3],
+    "displayValues": ["overload off", "standby off", "off", "on"],
+    "chart": {
+      "drawable": true,
+      "dataType": "event",
+      "yaxis": {
+        "min": 0,
+        "max": 3
+      }
+    },
+    "stats": {
+      "funcs": ["last"]
+    },
+    "category": "sensor"
+  },  
+  {
+    "id": "dust",
+    "unit": "µg/m³",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+     "category": "sensor"
+  },
+  {
+    "id": "density",
+    "unit": "g/m³",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+     "category": "sensor"
+  },
+  {
+    "id": "count",
+    "unit": "ea",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["max"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "countEvent",
+    "unit": "ea",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "event",
+      "yaxis": {
+        "min": 0
+      }
+    },
+    "stats": {
+      "funcs": ["max"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "timeDuration",
+    "unit": "sec",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "event",
+      "yaxis": {
+        "min": 0
+      }
+    },
+    "stats": {
+      "funcs": ["max"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "precipitationProbability",
+    "unit": "%",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0,
+      "max": 100,
+      "interval": 1
+    },
+    "minimum": 0,
+    "maximum": 100,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "windSpeed",
+    "unit": "m/s",
+    "type": "number",
+    "decimalPlace": 2,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "windVane",
+    "unit": "",
+    "type": "number",
+    "values": [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5],
+    "displayValues": ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"],    
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["last"]
+    },
+    "category": "sensor"
+  },  
+  {
+    "id": "rain",
+    "unit": "mm/min",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "pressure",
+    "unit": "bar",
+    "type": "number",
+    "decimalPlace": 1,
+    "range": {
+      "min": -1,
+      "max": 50
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "noise",
+    "unit": "dB",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": -100,
+      "max": 200
+    },
+    "minimum": -100,
+    "maximum": 200,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "speed",
+    "unit": "m/s",
+    "type": "number",
+    "decimalPlace": 3,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "sSpeed",
+    "unit": "mm/s",
+    "type": "number",
+    "decimalPlace": 3,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "weight",
+    "unit": "g",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "length",
+    "unit": "mm",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "color",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": true,
+      "dataType": "series",
+      "intervalFunc": "last"
+    },
+    "contentType": {
+      "properties": {
+        "r": {
+          "type": "number",
+          "range": {
+            "min": 0,
+            "max": 255
+          },
+          "minimum": 0,
+          "maximum": 255,
+          "decimalPlace": 0
+        },
+        "g": {
+          "type": "number",
+          "range": {
+            "min": 0,
+            "max": 255
+          },
+          "minimum": 0,
+          "maximum": 255,
+          "decimalPlace": 0
+        },
+        "b": {
+          "type": "number",
+          "range": {
+            "min": 0,
+            "max": 255
+          },
+          "minimum": 0,
+          "maximum": 255,
+          "decimalPlace": 0
+        }
+      },
+      "display": ["r", "g", "b"]
+    },    
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "vibration",
+    "unit": "V",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "led",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "on": [{
+        "name": "duration",
+        "type": "number",
+        "required":false,
+        "min": 100,
+        "max": 10000000,
+        "unit": "msec"
+      }],
+      "blink": [ {
+        "name": "duration",
+        "type": "number",
+        "required": false,
+        "min": 100,
+        "max": 10000000,
+        "unit": "msec"
+      },{
+        "name": "interval",
+        "type": "number",
+        "required": true,
+        "default": 5000,
+        "min": 100,
+        "max": 10000000,
+        "unit": "msec"
+      }],
+      "off": []
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "lcd",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "print": [ {
+        "name": "text",
+        "type": "text",
+        "required": true
+      },{
+        "name": "row",
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "min": 0,
+        "max": 11
+      },{
+        "name": "column",
+        "type": "number",
+        "required": false,
+        "default": 0,
+        "min": 0,
+        "max": 15
+      }],
+      "clear": [ {
+        "name": "row",
+        "type": "number",
+        "default": -1,
+        "min": -1,
+        "max": 11
+       }]
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "powerSwitch",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "on": [
+      {
+        "name": "duration",
+        "type": "number",
+        "required":false,
+        "min": 100,
+        "max": 10000000,
+        "unit": "msec"
+      }],
+      "off": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "powerController",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "object",
+          "properties": {
+            "result": {"type": "string"},
+            "electricPower": { "type": "number", "unit": "W" },
+            "electricEnergy": { "type": "number", "unit": "KWh" },
+            "standBy": { "type": "number", "unit": "W" }
+          }
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands": {
+      "on": [],
+      "off": [],
+      "get": [],
+      "set": [
+      {
+        "name": "standBy",
+        "type": "number",
+        "required": true,
+        "min": 0,
+        "max": 3000,
+        "unit": "W"
+      }],
+      "reset": [
+      {
+        "name": "standBy",
+        "type": "checkbox",
+        "required": false
+      },
+      {
+        "name": "power",
+        "type": "checkbox",
+        "required": false
+      }]
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "camera",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "object",
+          "properties": {
+            "contentType": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "url": {
+              "type": "link"
+            }
+          }
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"],
+      "link": ["result.url"]
+    },
+    "commands":  {
+      "snapPicture" : []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "temperatureController",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "type": "object",
+      "properties": {
+        "cmd": {
+          "enum": ["set", "get"]
+        },
+        "result": {
+          "type": "object",
+          "properties": {
+            "targetTemperature": { "type": "number", "unit": "°C" },
+            "coolingDeviation": { "type": "number", "unit": "°C" },
+            "heatingDeviation": { "type": "number", "unit": "°C" }
+          }
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": { "type": "integer" },
+            "message": { "type": "string" }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "set": [
+      {
+        "name": "targetTemperature",
+        "type": "number",
+        "required":false,
+        "min": -273,
+        "max": 300,
+        "unit": "°C"
+      },
+      {
+        "name": "coolingDeviation",
+        "type": "number",
+        "required":false,
+        "min": -273,
+        "max": 300,
+        "unit": "°C"
+      },
+      {
+        "name": "heatingDeviation",
+        "type": "number",
+        "required":false,
+        "min": -273,
+        "max": 300,
+        "unit": "°C"
+      }],
+      "get": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "waterController",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "type": "object",
+      "properties": {
+        "cmd": {
+          "enum": ["set"]
+        },
+        "result": {
+          "type": "object",
+          "properties": {
+            "quantity": { "type": "number", "unit": "" },
+            "wateringCount": { "type": "number", "unit": "" }
+          }
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": { "type": "integer" },
+            "message": { "type": "string" }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "set": [
+      {
+        "name": "wateringActivate",
+        "type": "number",
+        "required": true,
+        "min": 0,
+        "max": 10,
+        "unit": ""
+      }]
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "conductivity",
+    "unit": "dS/m",
+    "type": "number",
+    "decimalPlace": 3,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "solarRadiation",
+    "unit": "µmol/m²/s",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "buzzer",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "on": [],
+      "off": []
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "rotaryAngle",
+    "unit": "°",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0,
+      "max": 300
+    },
+    "minimum": 0,
+    "maximum": 300,    
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["last"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "rgbLed",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "on": [{
+        "name": "red",
+        "type": "number",
+        "required":false,
+        "default": 255,
+        "min": 0,
+        "max": 255
+      },
+      {
+        "name": "green",
+        "type": "number",
+        "required":false,
+        "default": 255,
+        "min": 0,
+        "max": 255
+      },
+      {
+        "name": "blue",
+        "type": "number",
+        "required":false,
+        "default": 255,
+        "min": 0,
+        "max": 255
+      }],
+      "off": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "7colorRGBLed",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "red": [],
+      "green": [],
+      "blue": [],
+      "magenta": [],
+      "yellow": [],
+      "cyan": [],
+      "white": [],
+      "off": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "stepCount",
+    "unit": "walks",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["diff"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "sleepStage",
+    "unit": "",
+    "type": "boolean",
+    "values":[0, 1, 2, 3],
+    "displayValues": ["AWAKE", "REM", "LIGHT", "DEEP"],    
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["last"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "crackDetection",
+    "unit": "",
+    "type": "boolean",
+    "values":[0, 1],
+    "displayValues": ["false", "true"],    
+    "chart": {
+      "drawable": true,
+      "dataType": "event"
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "linearDisplacement",
+    "unit": "mm",
+    "type": "number",
+    "decimalPlace": 3,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["range"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "electricFan",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "on": [],
+      "off": [],
+      "speedUp": [],
+      "speedDown": [],
+      "verticalSwing": [],
+      "horizontalSwing": [],
+      "sleepTimer": [],
+      "powerSaving": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "airConditioner",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "on": [],
+      "off": [],
+      "tempUp": [],
+      "tempDown": [],
+      "verticalAirFlow": [],
+      "horizontalAirFlow": [],
+      "fanSpeedUp": [],
+      "fanSpeedDown": [],
+      "powerCooling": [],
+      "mode": [],
+      "sleepTimer": [],
+      "airPurifier": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "television",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "on": [],
+      "off": [],
+      "channelUp": [],
+      "channelDown": [],
+      "volumeUp": [],
+      "volumeDown": [],
+      "mute": [],
+      "menu": [],
+      "changeInput": [],
+      "naviUp": [],
+      "naviDown": [],
+      "naviLeft": [],
+      "naviRight": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "airPurifier",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "on": [],
+      "off": [],
+      "fanSpeedUp": [],
+      "fanSpeedDown": [],
+      "fanAuto": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "wattage",
+    "unit": "kW",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series",
+      "cumulative": true
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "tag",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "values": ["in", "out", "tagged"],
+    "displayValues": ["in", "out", "tagged"],
+    "contentType": {
+      "properties": {
+        "state": {          
+          "enum": ["in", "out", "tagged"]
+        },
+        "reader": {
+          "type": "string"
+        }
+      },
+      "display": ["state", "reader"]
+    },
+    "stats": {
+      "funcs": ["last"]
+    },    
+    "category": "sensor"
+  },
+  {
+    "id": "reader",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "values": ["in", "out", "tagged"],
+    "displayValues": ["in", "out", "tagged"],    
+    "contentType": {
+      "properties": {
+        "state": {
+          "enum": ["in", "out", "tagged"]
+        },
+        "tag": {
+          "type": "string"
+        }
+      },
+      "display": ["state", "tag"]
+    },
+    "stats": {
+      "funcs": ["last"]
+    },     
+    "category": "sensor"
+  },
+  {
+    "id": "rssi",
+    "unit": "",
+    "type": "number",
+    "decimalPlace": 0,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "distance",
+    "unit": "m",
+    "type": "number",
+    "decimalPlace": 2,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "no2",
+    "unit": "ppm",
+    "type": "number",
+    "decimalPlace": 3,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "o3",
+    "unit": "ppm",
+    "type": "number",
+    "decimalPlace": 3,
+    "range": {
+      "min": 0
+    },
+    "minimum": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "ultraviolet-b",
+    "unit": "W/m²",
+    "type": "number",
+    "decimalPlace": 1,
+    "range": {
+      "min": 0,
+      "max": 10
+    },
+    "minimum": 0,
+    "maximum": 10,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "stringActuator",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "send": [ {
+        "name": "text",
+        "type": "text",
+        "required": true
+      }]
+    },
+    "stats": {
+      "funcs": ["count"]
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "lockUnlock",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "lock": [],
+      "unlock": []
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "timer",
+    "unit": "",
+    "type": "object",
+    "chart": {
+      "drawable": false,
+      "dataType": "event"
+    },
+    "contentType": {
+      "properties": {
+        "cmd": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "display": ["cmd"]
+    },
+    "commands":  {
+      "set": [{
+        "name": "duration",
+        "type": "number",
+        "required":true,
+        "min": 0,
+        "unit": "sec"
+      }]
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "state",
+    "unit": "",
+    "type": "number",
+    "decimalPlace": 0,
+    "chart": {
+      "drawable": true,
+      "dataType": "event"
+    },
+    "stats": {
+      "funcs": ["sum"],
+      "frequency": "y"
+    },
+    "category": "sensor"
+  }
+]

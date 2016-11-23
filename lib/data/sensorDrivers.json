@@ -1,0 +1,2115 @@
+[
+  {
+    "id": "ds18b20",
+    "displayName": "ds18b20",
+    "driverName": "ds18b20",
+    "dataTypes": [
+      "temperature"
+    ],
+    "models": [
+      "ds18b20"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "w1"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "dht",
+    "displayName": "dht",
+    "driverName": "dht",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "humidity"
+    ],
+    "models": [
+      "dht11",
+      "dht22"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "gpio"
+    ],
+    "descriptions": {
+      "models":{
+        "dht11": "Humidity sensor",
+        "dht22": "Humidity sensor(higher accurate)"
+      },
+      "supportedNetworks": {
+        "gpio" : "{gpio number} e.g. 27"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "magneticSwitch",
+    "displayName": "Magnetic Switch",
+    "driverName": "magneticSwitch",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "onoff"
+    ],
+    "models": [
+      "normallyOpen",
+      "normallyClose"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "gpio"
+    ],
+    "descriptions": {
+      "models":{
+        "normallyOpen": "open: 'off', close: 'on'",
+        "normallyClose": "open: 'on', close: 'off'"
+      },
+      "supportedNetworks": {
+        "gpio" : "{gpio number} e.g. 115, 46, 61"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "fireAlarm",
+    "displayName": "Fire Alarm",
+    "driverName": "fireAlarm",
+    "dataTypes": [
+      "onoff"
+    ],
+    "models": [
+      "fireAlarm"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "w1"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "motionDetector",
+    "displayName": "Motion Detector",
+    "driverName": "motionDetector",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "motion"
+    ],
+    "models": [
+      "passiveInfrared"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "gpio"
+    ],
+    "descriptions": {
+      "models":{
+        "passiveInfrared": "motion: 'on', no motion: 'off'"
+      },
+      "supportedNetworks": {
+        "gpio" : "{gpio number} e.g. 115, 46, 61"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "sensorTagWobble",
+    "displayName": "TI SensorTag Wobble Detector",
+    "driverName": "sensorTagWobble",
+    "idTemplate": "{model}-{deviceAddress}",
+    "dataTypes": [
+      "onoff"
+    ],
+    "models": [
+      "sensorTagWobble"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "ble"
+    ],
+    "descriptions": {
+      "models":{
+        "sensorTagWobble": "TI Sensor Tag; wobble: 'on', no wobble: 'off'"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "sensorTagHum",
+    "displayName": "TI SensorTag Humidity",
+    "driverName": "sensorTagHum",
+    "idTemplate": "{model}-{deviceAddress}",
+    "dataTypes": [
+      "humidity"
+    ],
+    "models": [
+      "sensorTagHum"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "ble"
+    ],
+    "descriptions": {
+      "models":{
+        "sensorTagHum": "TI Sensor Tag, Humidity only"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "photocell",
+    "displayName": "photocell",
+    "driverName": "photocell",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "light"
+    ],
+    "models": [
+      "photocell"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "analog"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "mg811",
+    "displayName": "CO2 Detector",
+    "driverName": "mg811",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "co2"
+    ],
+    "models": [
+      "mg811"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "analog"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "GP2Y1010AU0F",
+    "displayName": "Dust Detector",
+    "driverName": "GP2Y1010AU0F",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "dust"
+    ],
+    "models": [
+      "GP2Y1010AU0F"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "analog"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "rgbLed",
+    "displayName": "RGB LED",
+    "driverName": "rgbLed",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "led"
+    ],
+    "models": [
+      "rgbLed"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "gpio"
+    ],
+    "descriptions": {
+      "supportedNetworks": {
+        "gpio" : "{gpio number} e.g. 67"
+      }
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "powerSwitch",
+    "displayName": "Power Switch",
+    "driverName": "powerSwitch",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "powerSwitch"
+    ],
+    "models": [
+      "powerSwitch"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "gpio"
+    ],
+    "descriptions": {
+      "supportedNetworks": {
+        "gpio" : "{gpio number} e.g. 67"
+      }
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "gps",
+    "displayName": "GPS",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "driverName": "gps",
+    "dataTypes": ["location"],
+    "models": ["gps"],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "uart"
+    ],
+    "descriptions": {
+      "supportedNetworks": {
+        "uart" : "{port number} e.g. 1"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "futureSensor",
+    "displayName": "FutureTek Sensor",
+    "driverName": "futureSensor",
+    "dataTypes": {
+      "futureTemp" : ["temperature"],
+      "futureHumi" : ["humidity"],
+      "futureDi": ["onoff"],
+      "futureDoor": ["door"],
+      "futureGas": ["co2"],
+      "futurePower": ["power"],
+      "futureDust": ["dust"],
+      "futureCount": ["count"],
+      "futureCountEvent": ["countEvent"],
+      "futureVoltage": ["voltage"],
+      "futureCurrent": ["current"],
+      "futurePressure": ["pressure"]
+    },
+    "models": [
+      "futureTemp",
+      "futureHumi",
+      "futureDi",
+      "futureDoor",
+      "futureGas",
+      "futurePower",
+      "futureDust",
+      "futureCount",
+      "futureCountEvent",
+      "futureVoltage",
+      "futureCurrent",
+      "futurePressure"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "future"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "digitalLight",
+    "displayName": "Digital Light Sensor",
+    "driverName": "digitalLight",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "light"
+    ],
+    "models": [
+      "TSL2561",
+      "BH1750"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "i2c"
+    ],
+    "descriptions": {
+      "models":{
+        "TSL2561": "I2C Light Sensor by TAOS Inc.",
+        "BH1750": "I2C Light Sensor byROHM Co."
+      },
+      "supportedNetworks": {
+        "i2c" : "0x{hexa number} e.g. 0x23, 0x5c if ADD pin is high"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "digitalCO2",
+    "displayName": "Digital CO2 Sensor",
+    "driverName": "digitalCO2",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "co2"
+    ],
+    "models": [
+      "X100"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "i2c",
+      "uart"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "digitalHumidity",
+    "displayName": "Digital Humidity Sensor",
+    "driverName": "digitalHumidity",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "humidity"
+    ],
+    "models": [
+      "HTU21D"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "i2c"
+    ],
+    "descriptions": {
+      "models":{
+        "HTU21D": "I2C Humidity Sensor by MEAS"
+      },
+      "supportedNetworks": {
+        "i2c" : "0x{hexa number} e.g. 0x40"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "futureActuator",
+    "displayName": "FutureTek Actuator",
+    "driverName": "futureActuator",
+    "dataTypes": {
+      "futureDo": [ "powerSwitch" ],
+      "futureTempCtrl": [ "temperatureController" ]
+    },
+    "models": [
+      "futureDo",
+      "futureTempCtrl"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "future"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "foscamSensor",
+    "displayName": "Foscam Sensor",
+    "driverName": "foscamSensor",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "camera"
+    ],
+    "models": [
+      "FI9821WS"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "foscam"
+    ],
+    "descriptions": {
+      "supportedNetworks": {
+        "foscam" : "{ip_address}:{port} e.g. 192.168.0.11:88"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "foscamActuator",
+    "displayName": "Foscam Actuator",
+    "driverName": "foscamActuator",
+    "idTemplate": "{model}-{gatewayId}-{deviceAddress}",
+    "dataTypes": [
+      "camera"
+    ],
+    "models": [
+      "FI9821WA"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "foscam"
+    ],
+    "commands": {
+      "FI9821WA": {
+        "snapPicture" : [],
+        "gotoPresetDefault": [],
+        "resetPosition":[],
+        "reboot": []
+      }
+    },
+    "upload": {
+      "FI9821WA": [
+        "snapPicture"
+      ]
+    },
+    "descriptions": {
+      "supportedNetworks": {
+        "foscam" : "{ip_address}:{port} e.g. 192.168.0.11:88"
+      }
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "daliworksInternal",
+    "displayName": "Daliworks Internal Sensor",
+    "driverName": "daliworksInternal",
+    "idTemplate": "{model}-{gatewayId}",
+    "dataTypes": {
+      "gatewaysCounter": ["count"],
+      "sensorsCounter": ["count"],
+      "usersCounter": ["count"]
+    },
+    "models": [
+      "gatewaysCounter",
+      "sensorsCounter",
+      "usersCounter"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "daliworksEmulator",
+    "displayName": "Daliworks Sensor Emulator",
+    "driverName": "daliworksEmulator",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": {
+      "temperatureEmulator": ["temperature"],
+      "humidityEmulator": ["humidity"],
+      "doorEmulator": ["onoff"],
+      "powerEmulator": ["power"]
+    },
+    "models": [
+      "temperatureEmulator",
+      "humidityEmulator",
+      "doorEmulator",
+      "powerEmulator"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "daliworksWeather",
+    "displayName": "Daliworks Weather Sensor",
+    "driverName": "daliworksWeather",
+    "idTemplate": "{model}-{gatewayId}",
+    "dataTypes": {
+      "temperatureOpenAPI": ["temperature"],
+      "humidityOpenAPI": ["humidity"],
+      "rainOpenAPI" : ["rain"],
+      "windSpeedOpenAPI": ["windSpeed"],
+      "precipitationProbabilityOpenAPI": ["precipitationProbability"]
+    },
+    "models": [
+      "temperatureOpenAPI",
+      "humidityOpenAPI",
+      "rainOpenAPI",
+      "windSpeedOpenAPI",
+      "forecastPOPOpenAPI",
+      "temperatureDaliworks",
+      "humidityDaliworks"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "barunSensor",
+    "displayName": "Barun Sensor",
+    "driverName": "barunSensor",
+    "idTemplate": "{model}-{deviceAddress}",
+    "dataTypes": [
+      "temperature"
+    ],
+    "models": [
+      "CC3200S"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "barun"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "barunActuator",
+    "displayName": "Barun Actuator",
+    "driverName": "barunActuator",
+    "idTemplate": "{model}-{deviceAddress}",
+    "dataTypes": [
+      "powerSwitch"
+    ],
+    "models": [
+      "CC3200A"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "barun"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "jsonrpcSensor",
+    "displayName": "jsonrpc Sensor",
+    "driverName": "jsonrpcSensor",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}-{sequence}",
+    "dataTypes": {
+      "jsonrpcNumber": ["number"],      
+      "jsonrpcString": ["string"],
+      "jsonrpcTemp" : ["temperature"],
+      "jsonrpcHumi" : ["humidity"],
+      "jsonrpcLight": ["light"],
+      "jsonrpcNoise": ["noise"],
+      "jsonrpcDi": ["onoff"],      
+      "jsonrpcMotion": ["motion"],
+      "jsonrpcDoor": ["door"],
+      "jsonrpcCo2": ["co2"],
+      "jsonrpcCo": ["co"],
+      "jsonrpcVoc": ["voc"],
+      "jsonrpcPower": ["power"],
+      "jsonrpcDust": ["dust"],
+      "jsonrpcCount": ["count"],
+      "jsonrpcCountEvent": ["countEvent"],
+      "jsonrpcVoltage": ["voltage"],
+      "jsonrpcCurrent": ["current"],
+      "jsonrpcWeight": ["weight"],
+      "jsonrpcColor": ["color"],
+      "jsonrpcVibration": ["vibration"],
+      "jsonrpcSpeed": ["speed"],
+      "jsonrpcAccelerometer": ["accelerometer"],
+      "jsonrpcPressure": ["pressure"],
+      "jsonrpcRotaryAngle": ["rotaryAngle"],
+      "jsonrpcPercent": ["percent"],
+      "jsonrpcStepCount": ["stepCount"],
+      "jsonrpcSleepStage": ["sleepStage"],
+      "jsonrpcBatteryGauge": ["batteryGauge"],
+      "jsonrpcTag": ["tag"],
+      "jsonrpcReader": ["reader"],
+      "jsonrpcWindVane": ["windVane"],
+      "jsonrpcWindSpeed": ["windSpeed"],
+      "jsonrpcRain": ["rain"],
+      "jsonrpcSoilTemperature": ["soilTemperature"],
+      "jsonrpcSoilMoisture": ["soilMoisture"],
+      "jsonrpcUltravioletB": ["ultraviolet-b"],
+      "jsonrpcTimeDuration": ["timeDuration"],
+      "jsonrpcSolarRadiation": ["solarRadiation"],
+      "jsonrpcWattage": ["wattage"],
+      "jsonrpcElectricPower": ["electricPower"],
+      "jsonrpcElectricEnergy": ["electricEnergy"],
+      "jsonrpcState": ["state"],
+      "jsonrpcPh": ["ph"]
+    },
+    "models": [
+      "jsonrpcNumber",
+      "jsonrpcString",
+      "jsonrpcTemp",
+      "jsonrpcHumi",
+      "jsonrpcLight",
+      "jsonrpcNoise",
+      "jsonrpcDi",
+      "jsonrpcMotion",
+      "jsonrpcDoor",
+      "jsonrpcCo2",
+      "jsonrpcCo",
+      "jsonrpcVoc",
+      "jsonrpcPower",
+      "jsonrpcDust",
+      "jsonrpcCount",
+      "jsonrpcCountEvent",
+      "jsonrpcVoltage",
+      "jsonrpcCurrent",
+      "jsonrpcWeight",
+      "jsonrpcColor",
+      "jsonrpcVibration",
+      "jsonrpcSpeed",
+      "jsonrpcAccelerometer",
+      "jsonrpcPressure",
+      "jsonrpcRotaryAngle",
+      "jsonrpcPercent",
+      "jsonrpcStepCount",
+      "jsonrpcSleepStage",
+      "jsonrpcBatteryGauge",
+      "jsonrpcTag",
+      "jsonrpcReader",
+      "jsonrpcWindVane",
+      "jsonrpcWindSpeed",
+      "jsonrpcRain",
+      "jsonrpcSoilTemperature",
+      "jsonrpcSoilMoisture",
+      "jsonrpcUltravioletB",
+      "jsonrpcTimeDuration",
+      "jsonrpcSolarRadiation",
+      "jsonrpcWattage",
+      "jsonrpcElectricPower",
+      "jsonrpcElectricEnergy",
+      "jsonrpcState",
+      "jsonrpcPh"
+    ],
+    "onChange": {
+      "jsonrpcDi": true,
+      "jsonrpcMotion": true,
+      "jsonrpcDoor": true,
+      "jsonrpcCountEvent": true,
+      "jsonrpcTag": true,
+      "jsonrpcReader": true,
+      "jsonrpcLight": false
+    },
+    "recommendedInterval": 60000,
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "jsonrpc"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "jsonrpcActuator",
+    "displayName": "jsonrpc Actuator",
+    "driverName": "jsonrpcActuator",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}-{sequence}",
+    "dataTypes": {
+      "jsonrpcLed": ["led"],
+      "jsonrpcDo": [ "powerSwitch" ],
+      "jsonrpcTempCtrl": [ "temperatureController" ],
+      "jsonrpcElectricFan": [ "electricFan" ],
+      "jsonrpcAirConditioner": [ "airConditioner" ],
+      "jsonrpcTelevision": [ "television" ],
+      "jsonrpcRGBLed": [ "rgbLed" ],
+      "jsonrpc7colorRGBLed": [ "7colorRGBLed" ],
+      "jsonrpcBuzzer": [ "buzzer" ],
+      "jsonrpcLcd": ["lcd"],
+      "jsonrpcCamera": ["camera"],
+      "jsonrpcStringActuator": ["stringActuator"],
+      "jsonrpcPowerController": ["powerController"],
+      "jsonrpcLockUnlock": ["lockUnlock"],
+      "jsonrpcTimer": ["timer"]
+    },
+    "models": [
+      "jsonrpcLed",
+      "jsonrpcDo",
+      "jsonrpcTempCtrl",
+      "jsonrpcElectricFan",      
+      "jsonrpcAirConditioner",
+      "jsonrpcTelevision",
+      "jsonrpcRGBLed",
+      "jsonrpc7colorRGBLed",
+      "jsonrpcBuzzer",
+      "jsonrpcLcd",
+      "jsonrpcCamera",
+      "jsonrpcStringActuator",
+      "jsonrpcPowerController",
+      "jsonrpcLockUnlock",
+      "jsonrpcTimer"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "jsonrpc"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "botemPeopleCounter",
+    "displayName": "Botem People Counter",
+    "driverName": "botemPeopleCounter",
+    "idTemplate": "{type}-{gatewayId}",
+    "dataTypes": {
+      "botemPeopleCounter": ["countEvent"]
+    },
+    "models": [
+      "botemPeopleCounter"
+    ],
+    "discoverable": false,
+    "addressable": false,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "botemPowerSwitch",
+    "displayName": "Botem Power Switch",
+    "driverName": "botemPowerSwitch",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "powerSwitch"
+    ],
+    "models": [
+      "botemPowerSwitch"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "botemPowerSwitchSensor",
+    "displayName": "Botem Power Switch Sensor",
+    "driverName": "botemPowerSwitchSensor",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "onoff"
+    ],
+    "models": [
+      "botemPowerSwitchSensor"
+    ],
+    "discoverable": false,
+    "addressable": false,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "nmPowerSwitchActuator",
+    "displayName": "Nueromeka Power Switch",
+    "driverName": "nmPowerSwitchActuator",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{sequence}",
+    "dataTypes": [
+      "powerSwitch"
+    ],
+    "models": [
+      "nmPowerSwitchActuator"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "sequenceable": true,
+    "supportedNetworks": [
+      "serial"
+    ],
+    "descriptions": {
+      "supportedNetworks": {
+        "serial" : "{serial type}{port}  USB0 for /dev/ttyUSB0, O1 for /dev/ttyO1"
+      },
+      "sequence": "{channel number} e.g. 0 (from 0 to 1)"
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "libeliumSensor",
+    "displayName": "Libelium Sensor",
+    "driverName": "libeliumSensor",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}-{sequence}",
+    "dataTypes": {
+      "libeliumNumber": ["number"],
+      "libeliumString": ["string"],
+      "libeliumComplex": ["complex"],
+      "libeliumTemp" : ["temperature"],
+      "libeliumHumi" : ["humidity"],
+      "libeliumLight": ["light"],
+      "libeliumNoise": ["noise"],
+      "libeliumCo2": ["co2"],
+      "libeliumCo": ["co"],
+      "libeliumVoc": ["voc"],
+      "libeliumCount": ["count"],
+      "libeliumWeight": ["weight"],
+      "libeliumColor": ["color"],
+      "libeliumVibration": ["vibration"],
+      "libeliumSpeed": ["speed"],
+      "libeliumOnoff": ["onoff"],
+      "libeliumPressure": ["pressure"],
+      "libeliumRain": ["rain"],
+      "libeliumWindSpeed": ["windSpeed"],
+      "libeliumWindCurrent": ["current"],
+      "libeliumWindVane": ["windVane"],      
+      "libeliumLocation": ["location"],
+      "libeliumBatteryGauge": ["batteryGauge"],
+      "libeliumAccelerometer": ["accelerometer"],
+      "libeliumPH": ["pH"],
+      "libeliumDust": ["dust"],
+      "libeliumCurrent": ["current"],      
+      "libeliumTimeDuration": ["timeDuration"],
+      "libeliumConductivity": ["conductivity"],
+      "libeliumSoilTemperature": ["soilTemperature"],
+      "libeliumSoilMoisture": ["soilMoisture"],
+      "libeliumSolarRadiation": ["solarRadiation"],
+      "libeliumDistance": ["distance"],
+      "libeliumNo2": ["no2"],
+      "libeliumO3": ["o3"],
+      "libeliumAtmosphericPressure": ["pressure"],
+      "libeliumLightLux": ["light"],
+      "libeliumNumberPPM": ["number"],
+      "libeliumCoPro": ["co"],
+      "libeliumNo2Pro": ["no2"],
+      "libeliumO3Pro": ["o3"],
+      "libeliumCo2Pro": ["co2"],
+      "libeliumCh4Pro": ["number"],
+      "libeliumTempCelsPro": ["temperature"],
+      "libeliumTempFahr": ["temperature"],
+      "libeliumHumiPro": ["humidity"],
+      "libeliumRainMmh": ["rain"]
+    },
+    "models": [
+      "libeliumNumber",
+      "libeliumString",
+      "libeliumComplex",
+      "libeliumTemp",
+      "libeliumHumi",
+      "libeliumLight",
+      "libeliumNoise", 
+      "libeliumCo2", 
+      "libeliumCo", 
+      "libeliumVoc",
+      "libeliumCount", 
+      "libeliumWeight", 
+      "libeliumColor", 
+      "libeliumVibration",
+      "libeliumSpeed",
+      "libeliumOnoff",
+      "libeliumPressure",
+      "libeliumRain",
+      "libeliumWindSpeed",
+      "libeliumWindCurrent",
+      "libeliumWindVane",
+      "libeliumLocation",
+      "libeliumBatteryGauge",
+      "libeliumAccelerometer",
+      "libeliumPH",
+      "libeliumDust",
+      "libeliumCurrent",      
+      "libeliumTimeDuration",
+      "libeliumConductivity",
+      "libeliumSoilTemperature",
+      "libeliumSoilMoisture",
+      "libeliumSolarRadiation",
+      "libeliumDistance",
+      "libeliumNo2",
+      "libeliumO3",
+      "libeliumAtmosphericPressure",
+      "libeliumLightLux",
+      "libeliumNumberPPM",
+      "libeliumCoPro",
+      "libeliumNo2Pro",
+      "libeliumO3Pro",
+      "libeliumCo2Pro",
+      "libeliumCh4Pro",
+      "libeliumTempCelsPro",
+      "libeliumTempFahr",
+      "libeliumHumiPro",
+      "libeliumRainMmh"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "sequenceable": true,
+    "supportedNetworks": [
+      "libelium"
+    ],
+    "unit": {
+      "libeliumCo": "V",
+      "libeliumCo2": "V",
+      "libeliumNo2": "V",
+      "libeliumO3": "V",
+      "libeliumPressure": "Pa",
+      "libeliumAtmosphericPressure": "kPa",
+      "libeliumNoise": "dbA",
+      "libeliumLight": "Ω",
+      "libeliumLigthLux": "lux",
+      "libeliumNumberPPM": "ppm",
+      "libeliumCh4Pro": "%",
+      "libeliumTempFahr": "°F",
+      "libeliumRainMmh": "mm/h"
+    },
+    "decimalPlace": {
+      "libeliumCo": 3,
+      "libeliumCo2": 3,
+      "libeliumNo2": 3,
+      "libeliumO3": 3,
+      "libeliumPressure": 0,
+      "libeliumAtmosphericPressure": 2,
+      "libeliumNoise": 0,
+      "libeliumDistance": 2,
+      "libeliumLight": 3,
+      "libeliumTemp": 2,
+      "libeliumHumi": 1,
+      "libeliumLigthLux": 2,
+      "libeliumNumberPPM": 3,
+      "libeliumCoPro": 3,
+      "libeliumCo2Pro": 3,
+      "libeliumCh4Pro": 3,
+      "libeliumTempCelsPro": 3,
+      "libeliumTempFahr": 2,
+      "libeliumHumiPro": 2,
+      "libeliumDust": 4
+    },
+    "descriptions": {
+      "models":{
+      },
+      "supportedNetworks": {
+        "libelium" : "{device address} Waspmote address found at id_wasp field in DB"
+      },
+      "sequence": "{sequence number} e.g. 0, starts with zero, grows if more then one sensors for the same model"
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "visudreamSensor",
+    "displayName": "Visudream Sensor",
+    "driverName": "visudreamSensor",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}-{sequence}",
+    "dataTypes": {
+      "visudreamSum": ["power"],
+      "visudreamV": ["voltage"],
+      "visudreamI": ["current"],
+      "visudreamPf": ["powerFactor"],
+      "visudreamFreq": ["frequency"]
+    },
+    "models": [
+      "visudreamSum",
+      "visudreamV",
+      "visudreamI",
+      "visudreamPf",
+      "visudreamFreq"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "sequenceable": true,
+    "supportedNetworks": [
+      "visudream"
+    ],
+    "descriptions": {
+      "models": {
+        "visudreamSum": "cumulative power consumption",
+        "visudreamV": "Voltage",
+        "visudreamI": "Current",
+        "visudreamPf": "Power factor",
+        "visudreamFreq": "Frequency"
+      },
+      "supportedNetworks": {
+        "visudream" : "{ip_address}:{port} e.g. 192.168.0.11:5001"
+      },
+      "sequence": "{channel number} e.g. 1 (from 1 to 24)"
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "airqSensor",
+    "displayName": "Air-Q Sensor",
+    "driverName": "airqSensor",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}",
+    "dataTypes": {
+      "airqTemp": ["temperature"],
+      "airqHumi": ["humidity"],
+      "airqCo2": ["co2"]
+    },
+    "models": [
+      "airqTemp",
+      "airqHumi",
+      "airqCo2"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "sequenceable": false,
+    "supportedNetworks": [
+      "serial"
+    ],
+    "descriptions": {
+      "supportedNetworks": {
+        "serial" : "{serial type}{port}  USB0 for /dev/ttyUSB0, O1 for /dev/ttyO1"
+      }
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "jsonrpcSensorBotemDev",
+    "displayName": "JSONRPC Sensor for Botem Dev",
+    "driverName": "jsonrpcSensorBotemDev",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": {
+      "jsonrpcDiBotemDev": ["onoff"],
+      "jsonrpcCountEventBotemDev": ["countEvent"]
+    },
+    "models": [
+      "jsonrpcDiBotemDev",
+      "jsonrpcCountEventBotemDev"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "jsonrpc"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "jsonrpcActuatorBotemDev",
+    "displayName": "JSONRPC Actuator for Botem Dev",
+    "driverName": "jsonrpcActuatorBotemDev",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": {
+      "jsonrpcDoBotemDev": [ "powerSwitch" ]
+    },
+    "models": [
+      "jsonrpcDoBotemDev"
+    ],
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "jsonrpc"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "nthingSensor",
+    "displayName": "n.thing Sensor",
+    "driverName": "nthingSensor",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": {
+      "nthingTemp" : ["temperature"],
+      "nthingHumi" : ["humidity"],
+      "nthingLight": ["light"],
+      "nthingSpeed": ["sSpeed"],
+      "nthingBatteryGauge": ["batteryGauge"]
+    },
+    "models": [
+      "nthingTemp",
+      "nthingHumi",
+      "nthingLight",
+      "nthingSpeed",
+      "nthingBatteryGauge"
+    ],
+    "discoverable": false,
+    "addressable": false,
+    "sequenceable": true,
+    "supportedNetworks": [
+      "nthing"
+    ],
+    "descriptions": {
+      "models":{
+      },
+      "supportedNetworks": {
+      },
+      "sequence": "{sequence number} e.g. 0, starts with zero, grows if more then one sensors for the same model"
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "nthingActuator",
+    "displayName": "n.thing Actuator",
+    "driverName": "nthingActuator",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": {
+      "nthingWaterCtrl": ["waterController"],
+      "nthingStringActuator": ["stringActuator"]
+    },
+    "models": [
+      "nthingWaterCtrl",
+      "nthingStringActuator"
+    ],
+    "discoverable": false,
+    "addressable": false,
+    "sequenceable": true,
+    "supportedNetworks": [
+      "nthing"
+    ],
+    "descriptions": {
+      "models":{
+      },
+      "supportedNetworks": {
+      },
+      "sequence": "{sequence number} e.g. 0, starts with zero, grows if more then one sensors for the same model"
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "obskSensor",
+    "displayName": "OBS Korea Sensor",
+    "driverName": "obskSensor",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": {
+      "obskTemp" : ["temperature"],
+      "obskHumi" : ["humidity"],
+      "obskConductivity": ["conductivity"],
+      "obskPH": ["ph"],
+      "obskOnoff": ["onoff"],
+      "obskString": ["string"],
+      "obskNumber": ["number"]
+    },
+    "models": [
+      "obskTemp",
+      "obskHumi",
+      "obskConductivity",
+      "obskPH",
+      "obskOnoff",
+      "obskString",
+      "obskNumber"
+    ],
+    "discoverable": false,
+    "addressable": false,
+    "sequenceable": true,
+    "supportedNetworks": [
+      "obsk"
+    ],
+    "descriptions": {
+      "models":{
+      },
+      "supportedNetworks": {
+      },
+      "sequence": "{sequence number} e.g. 0, starts with zero, grows if more then one sensors for the same model"
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "genericSensor",
+    "displayName": "Generic Sensor",
+    "driverName": "genericSensor",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": {
+      "genericTemp" : ["temperature"],
+      "genericHumi" : ["humidity"],
+      "genericLight": ["light"],
+      "genericNoise": ["noise"],
+      "genericDi": ["onoff"],      
+      "genericMotion": ["motion"],
+      "genericDoor": ["door"],
+      "genericParkingStatus": ["parkingStatus"],
+      "genericCo2": ["co2"],
+      "genericCo": ["co"],
+      "genericVoc": ["voc"],
+      "genericPower": ["power"],
+      "genericElectricPower": ["electricPower"],
+      "genericPowerControllerState": ["powerControllerState"],
+      "genericPowerFactor": ["powerFactor"],
+      "genericWattage": ["wattage"],      
+      "genericVoltage": ["voltage"],
+      "genericCurrent": ["current"],      
+      "genericDust": ["dust"],
+      "genericCount": ["count"],
+      "genericCountEvent": ["countEvent"],
+      "genericWeight": ["weight"],
+      "genericColor": ["color"],
+      "genericVibration": ["vibration"],
+      "genericSpeed": ["speed"],
+      "genericAccelerometer": ["accelerometer"],
+      "genericString": ["string"],
+      "genericNumber": ["number"],
+      "genericPressure": ["pressure"],
+      "genericRotaryAngle": ["rotaryAngle"],
+      "genericFan": ["powerSwitch"],
+      "genericBattery": ["batteryGauge"],
+      "genericPercent": ["percent"],
+      "genericOnoff": ["onoff"],
+      "genericFireAlarm": ["onoff"],
+      "genericRssi": ["rssi"],
+      "genericDistance": ["distance"]
+    },
+    "models": [
+      "genericTemp",
+      "genericHumi",
+      "genericLight",
+      "genericNoise",
+      "genericDi",
+      "genericMotion",
+      "genericDoor",
+      "genericParkingStatus",
+      "genericCo2",
+      "genericCo",
+      "genericVoc",
+      "genericPower",
+      "genericElectricPower",
+      "genericPowerControllerState",
+      "genericPowerFactor",
+      "genericWattage",      
+      "genericVoltage",
+      "genericCurrent",      
+      "genericDust",
+      "genericCount",
+      "genericCountEvent",
+      "genericWeight",
+      "genericColor",
+      "genericVibration",
+      "genericSpeed",
+      "genericAccelerometer",
+      "genericString",
+      "genericNumber",
+      "genericPressure",
+      "genericRotaryAngle",
+      "genericFan",
+      "genericBattery",
+      "genericPercent",
+      "genericOnoff",
+      "genericFireAlarm",
+      "genericRssi",
+      "genericDistance"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericActuator",
+    "displayName": "Generic Actuator",
+    "driverName": "genericActuator",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": {
+      "genericLed": ["led"],
+      "genericRGBLed": ["rgbLed"],
+      "genericCamera": ["camera"],
+      "genericPowerSwitch": ["powerSwitch"],
+      "genericBuzzer": ["buzzer"],
+      "genericLcd": ["lcd"],
+      "genericPowerController": ["powerController"],
+      "generic7colorRGBLed": ["7colorRGBLed"]
+    },
+    "models": [
+      "genericLed",
+      "genericRGBLed",
+      "genericCamera",
+      "genericPowerSwitch",
+      "genericBuzzer",
+      "genericLcd",
+      "genericPowerController",
+      "generic7colorRGBLed"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "commands": {
+      "genericCamera": {
+        "snapPicture": []
+      }
+    },
+    "category": "actuator"
+  },
+  {
+    "id": "genericTemp",
+    "displayName": "Temperature",
+    "driverName": "genericTemp",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "temperature"
+    ],
+    "models": [
+      "genericTemp"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericHumi",
+    "displayName": "Humidity",
+    "driverName": "genericHumi",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "humidity"
+    ],
+    "models": [
+      "genericHumi"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericLight",
+    "displayName": "Light",
+    "driverName": "genericLight",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "light"
+    ],
+    "models": [
+      "genericLight"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericDi",
+    "displayName": "Digital Input",
+    "driverName": "genericDi",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "onoff"
+    ],
+    "models": [
+      "genericDi"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericDoor",
+    "displayName": "Door Sensor",
+    "driverName": "genericDoor",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "door"
+    ],
+    "models": [
+      "genericDoor"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericCo2",
+    "displayName": "Co2",
+    "driverName": "genericCo2",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "co2"
+    ],
+    "models": [
+      "genericCo2"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericCo",
+    "displayName": "Co",
+    "driverName": "genericCo",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "co"
+    ],
+    "models": [
+      "genericCo"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericPower",
+    "displayName": "Power",
+    "driverName": "genericPower",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "power"
+    ],
+    "models": [
+      "genericPower"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericPowerFactor",
+    "displayName": "PowerFactor",
+    "driverName": "genericPowerFactor",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "powerFactor"
+    ],
+    "models": [
+      "genericPowerFactor"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  }, 
+  {
+    "id": "genericWattage",
+    "displayName": "Wattage",
+    "driverName": "genericWattage",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "wattage"
+    ],
+    "models": [
+      "genericWattage"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericVoltage",
+    "displayName": "Voltage",
+    "driverName": "genericVoltage",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "voltage"
+    ],
+    "models": [
+      "genericVoltage"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericCurrent",
+    "displayName": "Current",
+    "driverName": "genericCurrent",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "current"
+    ],
+    "models": [
+      "genericCurrent"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },  
+  {
+    "id": "genericDust",
+    "displayName": "Dust",
+    "driverName": "genericDust",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "dust"
+    ],
+    "models": [
+      "genericDust"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericCount",
+    "displayName": "Count",
+    "driverName": "genericCount",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "count"
+    ],
+    "models": [
+      "genericCount"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericNumber",
+    "displayName": "Number",
+    "driverName": "genericNumber",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "number"
+    ],
+    "models": [
+      "genericNumber"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },  
+  {
+    "id": "genericRotaryAngle",
+    "displayName": "RotaryAngle",
+    "driverName": "genericRotaryAngle",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "rotaryAngle"
+    ],
+    "models": [
+      "genericRotaryAngle"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericFan",
+    "displayName": "Fan",
+    "driverName": "genericFan",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "powerSwitch"
+    ],
+    "models": [
+      "genericFan"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "genericBattery",
+    "displayName": "Battery Gauge",
+    "driverName": "genericBattery",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "batteryGauge"
+    ],
+    "models": [
+      "genericBattery"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericPercent",
+    "displayName": "Percent",
+    "driverName": "genericPercent",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "percent"
+    ],
+    "models": [
+      "genericPercent"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericOnoff",
+    "displayName": "On Off",
+    "driverName": "genericOnoff",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",    
+    "dataTypes": [
+      "onoff"
+    ],
+    "models": [
+      "genericOnoff"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericFireAlarm",
+    "displayName": "Fire Alarm",
+    "driverName": "genericFireAlarm",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",    
+    "dataTypes": [
+      "onoff"
+    ],
+    "models": [
+      "genericFireAlarm"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "genericLed",
+    "displayName": "Led",
+    "driverName": "genericLed",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "led"
+    ],
+    "models": [
+      "genericLed"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "genericRGBLed",
+    "displayName": "RGBLed",
+    "driverName": "genericRGBLed",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "rgbLed"
+    ],
+    "models": [
+      "genericRGBLed"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "actuator"
+  },  
+  {
+    "id": "genericCamera",
+    "displayName": "Camera",
+    "driverName": "genericCamera",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "camera"
+    ],
+    "models": [
+      "genericCamera"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "commands": {
+      "genericCamera": {
+        "snapPicture": []
+      }
+    },
+    "category": "actuator"
+  }, 
+  {
+    "id": "genericPowerSwitch",
+    "displayName": "Power Switch",
+    "driverName": "genericPowerSwitch",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "powerSwitch"
+    ],
+    "models": [
+      "genericPowerSwitch"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "genericBuzzer",
+    "displayName": "Buzzer",
+    "driverName": "genericBuzzer",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "buzzer"
+    ],
+    "models": [
+      "genericBuzzer"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "genericDistance",
+    "displayName": "Distance",
+    "driverName": "genericDistance",
+    "idTemplate": "{type}-{gatewayId}-{sequence}",
+    "dataTypes": [
+      "distance"
+    ],
+    "models": [
+      "genericDistance"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "unit": {
+      "genericDistance": "cm"
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "ezexSensor",
+    "displayName": "Ezex Sensor",
+    "driverName": "ezexSensor",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}-{sequence}",
+    "dataTypes": {
+      "ezexNumber": ["number"],      
+      "ezexString": ["string"],
+      "ezexTemp" : ["temperature"],
+      "ezexHumi" : ["humidity"],
+      "ezexLight": ["light"],
+      "ezexNoise": ["noise"],
+      "ezexOnoff": ["onoff"],      
+      "ezexMotion": ["motion"],
+      "ezexDoor": ["door"],
+      "ezexCo2": ["co2"],
+      "ezexCo": ["co"],
+      "ezexVoc": ["voc"],
+      "ezexPower": ["power"],
+      "ezexDust": ["dust"],
+      "ezexCount": ["count"],
+      "ezexCountEvent": ["countEvent"],
+      "ezexVoltage": ["voltage"],
+      "ezexCurrent": ["current"],
+      "ezexWeight": ["weight"],
+      "ezexColor": ["color"],
+      "ezexVibration": ["vibration"],
+      "ezexSpeed": ["speed"],
+      "ezexAccelerometer": ["accelerometer"],
+      "ezexPressure": ["pressure"],
+      "ezexRotaryAngle": ["rotaryAngle"],
+      "ezexPercent": ["percent"],
+      "ezexStepCount": ["stepCount"],
+      "ezexSleepStage": ["sleepStage"],
+      "ezexBatteryGauge": ["batteryGauge"],
+      "ezexTag": ["tag"],
+      "ezexReader": ["reader"],
+      "ezexWindVane": ["windVane"],
+      "ezexWindSpeed": ["windSpeed"],
+      "ezexRain": ["rain"],
+      "ezexSoilTemperature": ["soilTemperature"],
+      "ezexSoilMoisture": ["soilMoisture"],
+      "ezexUltravioletB": ["ultraviolet-b"],
+      "ezexTimeDuration": ["timeDuration"],
+      "ezexSolarRadiation": ["solarRadiation"],
+      "ezexWattage": ["wattage"],
+      "ezexElectricPower": ["electricPower"],
+      "ezexElectricEnergy": ["electricEnergy"],
+      "ezexElectricPowerEvent": ["electricPower"]
+    },
+    "models": [
+      "ezexNumber",    
+      "ezexString",
+      "ezexTemp",
+      "ezexHumi",
+      "ezexLight",
+      "ezexNoise",
+      "ezexOnoff",
+      "ezexMotion",
+      "ezexDoor",
+      "ezexCo2",
+      "ezexCo",
+      "ezexVoc",
+      "ezexPower",
+      "ezexDust",
+      "ezexCount",
+      "ezexCountEvent",
+      "ezexVoltage",
+      "ezexCurrent",
+      "ezexWeight",
+      "ezexColor",
+      "ezexVibration",
+      "ezexSpeed",
+      "ezexAccelerometer",
+      "ezexPressure",
+      "ezexRotaryAngle",
+      "ezexPercent",
+      "ezexStepCount",
+      "ezexSleepStage",
+      "ezexBatteryGauge",
+      "ezexTag",
+      "ezexReader",
+      "ezexWindVane",
+      "ezexWindSpeed",
+      "ezexRain",
+      "ezexSoilTemperature",
+      "ezexSoilMoisture",
+      "ezexUltravioletB",
+      "ezexTimeDuration",
+      "ezexSolarRadiation",
+      "ezexWattage",
+      "ezexElectricPower",
+      "ezexElectricEnergy",
+      "ezexElectricPowerEvent"
+    ],
+    "onChange": {
+      "ezexOnoff": true,
+      "ezexMotion": true,
+      "ezexDoor": true,
+      "ezexCountEvent": true,
+      "ezexTag": true,
+      "ezexReader": true,
+      "ezexElectricPowerEvent": true
+    },
+    "unit": {
+      "ezexElecticEnergy": "Wh"
+    },
+    "decimalPlace": {
+      "ezexCurrent": 2,
+      "ezexVoltage": 2,
+      "ezexElectricPowerEvent": 0
+    },
+    "recommendedInterval": 60000,
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "jsonrpc"
+    ],
+    "networkDrivers": {
+      "jsonrpc": "jsonrpcSensor"
+    },
+    "category": "sensor"
+  },
+  {
+    "id": "ezexActuator",
+    "displayName": "Ezex Actuator",
+    "driverName": "ezexActuator",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}-{sequence}",
+    "dataTypes": {
+      "ezexPowerController": ["powerController"],
+      "ezexLockUnlock": ["lockUnlock"],
+      "ezexSwitch": [ "powerSwitch" ],
+      "ezexTimer": ["timer"]
+    },
+    "models": [
+      "ezexPowerController",
+      "ezexLockUnlock",
+      "ezexSwitch",
+      "ezexTimer"
+    ],
+    "contentType": {
+      "ezexPowerController": {
+        "properties": {
+          "cmd": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "cutoffValue": {
+                "type": "number",
+                "unit": "W",
+                "minimum": 0
+              },
+              "powerStatus": {
+                "type": "string",
+                "enum": ["on", "off"]
+              },
+              "autoCutoffStatus": {
+                "type": "string",
+                "enum": ["on", "off"]
+              },
+              "remoteLockStatus": {
+                "type": "string",
+                "enum": ["on", "off"]
+              }
+            }
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "display": ["cmd"]
+      },
+      "ezexSwitch": {
+        "properties": {
+          "cmd": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": ["success", "error"]
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "display": ["cmd"]
+      },
+      "ezexLockUnlock": {
+        "properties": {
+          "cmd": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": ["success", "error"]
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "display": ["cmd"]
+      },
+      "ezexTimer": {
+        "properties": {
+          "cmd": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "duration": {
+                "type": "number",
+                "unit": "sec",
+                "minimum": 0
+              }
+            }
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "display": ["cmd"]
+      }
+    },
+    "commands": {
+      "ezexPowerController": {
+        "powerOn": [],
+        "powerOff": [],
+        "autoCutoffOn": [],
+        "autoCutoffOff": [],
+        "remoteLockOn": [],
+        "remoteLockOff": [],
+        "set": [
+          {
+            "name": "cutoffValue",
+            "type": "number",
+            "required": true,
+            "min": 0,
+            "max": 3000,
+            "unit": "W"
+          }
+        ],
+        "get": []
+      },
+      "ezexSwitch": {
+        "on": [],
+        "off": []
+      },
+      "ezexLockUnlock": {
+        "lock": [],
+        "unlock": []
+      },
+      "ezexTimer": {
+        "set": [
+          {
+            "name": "duration",
+            "type": "number",
+            "required": true,
+            "min": 0,
+            "max": 3000,
+            "unit": "sec"
+          }
+        ],
+        "get": []
+      }
+    },
+    "discoverable": true,
+    "addressable": false,
+    "supportedNetworks": [
+      "jsonrpc"
+    ],
+    "networkDrivers": {
+      "jsonrpc": "jsonrpcActuator"
+    },
+    "category": "actuator"
+  }
+]
