@@ -46,7 +46,7 @@ function isDevicePostValid(gatewayItem, deviceItem, cb) {
   _.forEach(deviceKeys, function (key) {
     if(!deviceItem[key]) {
       logger.error('[isDevicePostValid] missing %s. device item=', key, deviceItem);
-      return cb && cb('missing ', key);      
+      return cb && cb('missing ' + key);      
     }
   });
 
@@ -80,7 +80,7 @@ function isSensorPostValid(gatewayItem, sensorItem, cb) {
   _.forEach(sensorKeys, function (key) {
     if(!sensorItem[key]) {
       logger.error('[isSensorPostValid] missing %s. device item=', key, sensorItem);
-      return cb && cb('missing ', key);      
+      return cb && cb('missing ' + key);      
     }
   });
   
@@ -93,7 +93,7 @@ function isSensorPostValid(gatewayItem, sensorItem, cb) {
     return cb && cb('duplicated reqId');
   }  
 
-  // check sensorDeiver
+  // check sensorDriver
 
   return cb && cb();
 
@@ -220,23 +220,6 @@ TcRest.prototype.historySet = function (tcName, result, time, reason, raw) {
   };
 
   this.history[tcName].push(tcHistory);
-
-
-
-  // if (result) {
-  //   this.history[tcName].push({'result': result, 'time': time});
-  // }
-  // else {
-  //   var history = {'result': result, 'reason': reason, 'time': time};
-  //   if (raw) {
-  //     if (typeof raw === 'object') {
-  //       raw = JSON.stringify(raw);
-  //     }
-  //     history['raw'] = raw;
-  //   }
-
-  //   this.history[tcName].push(history);
-  // }
 };
 
 /**
