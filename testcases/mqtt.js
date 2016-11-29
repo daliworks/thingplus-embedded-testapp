@@ -1,8 +1,17 @@
-var _ = require('lodash');
-var async = require('async');
+var fs = require('fs'),
+  _ = require('lodash'),
+  async = require('async'),
+  randomstring = require('randomstring'),
+  util = require('util'),
+  Ajv = require('ajv'),
+  events = require('events');
 
-var TC_SENSOR_VALUE_PREFIX = 'tcValue-'
-var TC_STATUS_PREFIX = 'tcStatus-'
+
+var TC_SENSOR_VALUE_PREFIX = 'tcValue-';
+var TC_STATUS_PREFIX = 'tcStatus-';
+var SENSOR_TYPES = JSON.parse(fs.readFileSync('sensorTypes.json', 'utf8'));
+var ACTUATOR_CMD_RESPONSE_TIMEOUT = 30000;
+//var ACTUATOR_CMD_RESPONSE_TIMEOUT = 1000;
 
 /**
  * 
@@ -75,6 +84,20 @@ function sensorIdsInit(hardwareInfo) {
  * @param {any} hardwareInfo
  * @returns
  */
+function actuatorIdsInit(hardwareInfo) {
+  var actuatorIds = [];
+
+  _.forEach(hardwareInfo.devices, function (device) {
+    _.forEach(device.sensors, function (sensor) {
+      if (sensor.category === 'actuator') {
+        actuatorIds.push(sensor.id);
+      }
+    });
+  });
+
+  return actuatorIds;
+}
+
 function statusIdsInit(hardwareInfo) {
   var statusIds = [];
 
@@ -139,19 +162,23 @@ function TcMqtt (config) {
   this.hardwareInfo = config;
 
   this.sensorValueIds = sensorIdsInit(this.hardwareInfo);
+  this.actuatorIds = actuatorIdsInit(this.hardwareInfo);
   this.statusIds = statusIdsInit(this.hardwareInfo);
   this.generation();
 
   this.errorId = [];
   this.history = {};
   _.map(_.filter(_.keysIn(this), function (key) {
-    return _.isFunction(this[key]) && _.startsWith(key, 'tc')}.bind(this)),
+    return _.isFunction(this[key]) && _.startsWith(key, 'tc');}.bind(this)),
   function (tc) {
       this.history[tc] = [];//testcases.push({name: tc, result: {}})
   }.bind(this));
 }
+
+util.inherits(TcMqtt, events.EventEmitter);
+
 /*
-   history = { 
+   history = {
    { "tcStatus-012345012345": []},
    { "tcStatus-012345012345-0": []},
    { "tcApikey": []},
@@ -175,7 +202,7 @@ TcMqtt.prototype.generation = function () {
   _.forEach(this.statusIds, function (id) {
      that[TC_STATUS_PREFIX + id] = isStatusValid;
   });
-}
+};
 
 /**
  * 
@@ -195,17 +222,7 @@ TcMqtt.prototype.equal = function (expect, actual, time, cb) {
   }
 
   return cb && cb (result, reason);
-
-
-  if (result) {
-    this.historySet(tcName, result, time);
-  }
-  else {
-    this.historySet(tcName, result, time, 'expect:'+ expect +', actual:' + actual);
-  }
-
-  return cb && cb(null, result, actual);
-}
+};
 
 /**
  * 
@@ -235,7 +252,9 @@ TcMqtt.prototype.statuses = function (statuses, time, raw, cb) {
       });
     },
     function (err) {
-      cb && cb();
+      if (cb) {
+        cb();
+      }
   });
 };
 
@@ -276,9 +295,11 @@ TcMqtt.prototype.sensorValues = function (values, time, raw, cb) {
       });
     },
     function (err) {
-      cb && cb();
+      if (cb) {
+        cb();
+      }
   });
-}
+};
 
 /**
  * 
@@ -292,7 +313,10 @@ TcMqtt.prototype.tcGatewayId = function (gatewayId, time, cb) {
 
   this.equal(this.hardwareInfo.gatewayId, gatewayId, time, function (result, reason){
     this.historySet('tcGatewayId', result, time, reason);
-    cb && cb();
+    if (cb) {
+      cb();
+    }
+
   }.bind(this));
 };
 
@@ -362,7 +386,7 @@ TcMqtt.prototype.tcKeepalive = function (keepalive, time, cb) {
   logStartTest('tcKeepalive');
 
   var MAX_KEEPALIVE = 60 * 10;
-  var expectation = this.hardwareInfo.reportInterval > MAX_KEEPALIVE ? 
+  var expectation = this.hardwareInfo.reportInterval > MAX_KEEPALIVE ?
     MAX_KEEPALIVE : this.hardwareInfo.reportInterval * 2;
 
   this.equal(expectation, keepalive, time, function (result, reason){
@@ -378,7 +402,6 @@ TcMqtt.prototype.tcKeepalive = function (keepalive, time, cb) {
  * @returns
  */
 TcMqtt.prototype.historyGet = function (tcName) {
-  //console.log(this.result);
   if (tcName) {
     return this.history[tcName];
   }
@@ -412,7 +435,7 @@ TcMqtt.prototype.historySet = function (tcName, result, time, reason, raw) {
       if (typeof raw === 'object') {
         raw = JSON.stringify(raw);
       }
-      history['raw'] = raw;
+      history.raw = raw;
     }
 
     this.history[tcName].push(history);
@@ -428,7 +451,7 @@ TcMqtt.prototype.historySet = function (tcName, result, time, reason, raw) {
  */
 TcMqtt.prototype.errorIdSet = function (id, time, raw) {
   this.errorId.push({'id': id, 'time': time, 'raw': raw});
-}
+};
 
 /**
  * 
@@ -437,7 +460,90 @@ TcMqtt.prototype.errorIdSet = function (id, time, raw) {
  */
 TcMqtt.prototype.errorIdGet = function () {
   return this.errorId;
-}
+};
+
+TcMqtt.prototype.tcActuator = function (message, time) {
+  var actuatorCommand = this.actuatorCmdHistory[message.id];
+
+  if (!actuatorCommand) {
+    this.historySet('tcActuator', false, time, 'Invaild Id', message);
+    return;
+  }
+
+  var sensorType = _.filter(SENSOR_TYPES, {'id': actuatorCommand.type})[0];
+  var ajv = new Ajv();
+  var validate = ajv.compile(sensorType.contentType);
+  var valid = validate(message);
+
+  if (valid) {
+    this.historySet('tcActuator', true, time, message);
+  }
+  else {
+    this.historySet('tcActuator', false, time, 'JSON SCHEMA FAIL', message);
+  }
+
+  delete this.actuatorCmdHistory[message.id];
+};
+
+TcMqtt.prototype.sendActuatorCmds = function () {
+  if (!this.actuatorCmdHistory) {
+    this.actuatorCmdHistory = {};
+  }
+
+  console.log('sendActuatorCmds');
+
+  var that = this;
+  var topic = 'v/a/g/' + this.hardwareInfo.gatewayId + '/req';
+
+  _.forEach(this.hardwareInfo.devices, function (device) {
+    _.chain(device.sensors)
+     .filter({'category': 'actuator'})
+     .map(function (actuator) {
+       var sensorType = _.filter(SENSOR_TYPES, {'id': actuator.type})[0];
+       async.eachOfSeries(sensorType.commands, function (options, cmd, asyncDone) {
+         var message = {};
+         message.id = randomstring.generate({
+           length:9,
+           charset:'alphabetic'
+         });
+
+         message.method = 'controlActuator';
+         message.params = {};
+         message.params.id = actuator.id;
+         message.params.cmd = cmd;
+         message.params.options = {};
+
+         _.forEach(options, function (option) {
+           if (option.required) {
+             if (option.type === 'text') {
+               message.params.options[option.name] = 'dummyText';
+             }
+             else if (option.type === 'number') {
+               message.params.options[option.name] = option.min;
+             }
+           }
+         });
+
+         that.emit('mqttPub', {'topic':topic, 'message':message});
+         that.actuatorCmdHistory[message.id] = {'type': actuator.type, 'cmd': cmd, 'message': message};
+
+         setTimeout(function () {
+           if (that.actuatorCmdHistory[message.id]) {
+             delete that.actuatorCmdHistory[message.id];
+             that.historySet('tcActuator', false, new Date().getTime(), 'command "' + cmd + '" response timeout');
+           }
+
+         }, ACTUATOR_CMD_RESPONSE_TIMEOUT);
+
+         setTimeout(function () {
+           asyncDone();
+         }, 1000);
+       },
+       function (err) {
+       });
+     })
+     .value();
+  });
+};
 
 module.exports = TcMqtt;
-

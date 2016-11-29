@@ -17,30 +17,30 @@ var CONFIG_FILE = 'config.json';
 
 var mqttBroker,
     httpServer,
-    testcases,
-    mqttConnected = false;
+    testcases;
 
 /**
  * loading config file
- * 
+ *
  * @returns config data
  */
 function loadConfig() {
   var config, file;
-  
-  if(fs.existsSync(CONFIG_FILE)) {
-    try {
-      file = fs.readFileSync(CONFIG_FILE, 'utf8');
-      config = JSON.parse(file);
 
-      logger.info('[loadConfig] config loading file success. config=', JSON.stringify(config));
-    }
-    catch (e) {
-      logger.error('[loadConfig] config json pasing failed. error=', e);
-      // throw e;
-    }
-  } else {
+  if (!fs.existsSync(CONFIG_FILE)) {
     logger.error('[loadConfig] file not found. ', CONFIG_FILE);
+    return undefined;
+  }
+
+  try {
+    file = fs.readFileSync(CONFIG_FILE, 'utf8');
+    config = JSON.parse(file);
+
+    logger.info('[loadConfig] config loading file success. config=', JSON.stringify(config));
+  }
+  catch (e) {
+    logger.error('[loadConfig] config json pasing failed. error=', e);
+    // throw e;
   }
 
   return config;
@@ -48,7 +48,7 @@ function loadConfig() {
 
 /**
  * create test case
- * 
+ *
  * @param {object} config
  * @returns
  */
@@ -59,7 +59,7 @@ function createTestCase(config) {
 
 /**
  * generate id with token
- * 
+ *
  * @param {string} str
  * @param {object} tokens
  * @returns
@@ -71,8 +71,8 @@ function registerIdTemplate(str, tokens) {
 }
 
 /**
- * create sensor data with sensorDrive info 
- * 
+ * create sensor data with sensorDrive info
+ *
  * @param {string} gatewayId
  * @param {string} deviceId
  * @param {object} sensorModel
@@ -91,7 +91,7 @@ function registerSensor(gatewayId, deviceId, sensorModel) {
                     sequence: sensorModel.sequence,
                     type: sensorModel.type
                   });
-  
+
   sensor = _.clone(sensorModel);
   sensor.id = sensorId;
   sensor.owner = gatewayId;
@@ -103,8 +103,8 @@ function registerSensor(gatewayId, deviceId, sensorModel) {
 }
 
 /**
- * create device data with device model info 
- * 
+ * create device data with device model info
+ *
  * @param {string} gatewayId
  * @param {object} deviceModel
  * @returns
@@ -132,7 +132,7 @@ function registerDevice(gatewayId, deviceModel) {
 
 /**
  * create gateway data and insert into database
- * 
+ *
  * @param {object} config
  * @returns
  */
@@ -195,7 +195,7 @@ function registerGateway(config) {
         }
       });
     }
-    
+
     if (registerDeviceInfo) {
       devices.push(registerDeviceInfo);
     }
@@ -213,7 +213,7 @@ function registerGateway(config) {
 
 /**
  * start mqtt broker(mosca)
- * 
+ *
  * @param {object} config
  * @param {object} tc
  * @param {function} cb
@@ -232,17 +232,26 @@ function runMqttBroker(config, tc, cb) {
 
     logger.info('[runMqttBroker] MQTT CONNECTED. clinet', client);
 
-    mqttConnected = true;
+    tc.mqtt.testcases.cleanSession(client.clean, time);
+    tc.mqtt.testcases.keepalive(client.keepalive, time);
+    tc.mqtt.testcases.willMessage(client.will, time);
 
-    tc.mqtt.tcCleanSession(client.clean, time);
-    tc.mqtt.tcWillMessage(client.will, time);
-    tc.mqtt.tcKeepalive(client.keepalive, time);
+    tc.mqtt.on('publishMqttMessage', function (message) {
+      mqttBroker.publish(message);
+      //console.log(message);
+    });
+
+    setTimeout(tc.mqtt.sendActuatorCommands(tc.mqtt), 1000);
   });
 
   mqttBroker.on('published', function (packet, client) {
     var time = new Date();
 
     if (_.startsWith(packet.topic, '$SYS')) {
+      return;
+    }
+
+    if (_.endsWith(packet.topic, 'req')) {
       return;
     }
 
@@ -253,25 +262,34 @@ function runMqttBroker(config, tc, cb) {
       }
 
       if (msg.status) {
-        tc.mqtt.statuses(msg.status);
+        //tc.mqtt.statuses(msg.status);
+        tc.mqtt.testcases.status(msg.status, time);
       }
 
       if (msg.sensorValue) {
-        tc.mqtt.sensorValues(msg.sensorValue);
+        //tc.mqtt.sensorValues(msg.sensorValue);
+        tc.mqtt.testcases.sensorValues(msg.sensorValue);
+      }
+
+      if (msg.response) {
+        //testcases.mqtt.tcActuator(msg.response);
+        tc.mqtt.testcases.actuatorResponse(msg.response);
       }
     });
   });
 
   mqttBroker.on('gatewayId', function (gatewayId) {
-    tc.mqtt.tcGatewayId(gatewayId);
+    tc.mqtt.testcases.gatewayId(gatewayId);
   });
 
   mqttBroker.on('apikey', function (apikey) {
-    tc.mqtt.tcApikey(apikey.toString());
+    //tc.mqtt.tcApikey(apikey.toString());
+    tc.mqtt.testcases.apikey(apikey.toString());
   });
 
   mqttBroker.on('keepalive', function (keepalive) {
-    tc.mqtt.tcKeepalive(keepalive);
+    //tc.mqtt.tcKeepalive(keepalive);
+    tc.mqtt.testcases.keepalive(keepalive);
   });
 
   return cb && cb();
@@ -279,7 +297,7 @@ function runMqttBroker(config, tc, cb) {
 
 /**
  * start http server(express)
- * 
+ *
  * @param {object} config
  * @param {object} tc
  * @param {function} cb
@@ -322,7 +340,7 @@ function runHttpServer(config, tc, cb) {
     var addr = httpServer.address();
     var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
     logger.info('[runHttpServer] Listening on ' + bind);
-  });  
+  });
 
   return cb && cb();
 }
@@ -331,14 +349,14 @@ function runHttpServer(config, tc, cb) {
  * create report
  */
 function generateReport() {
-  report(mqttConnected, testcases.mqttParser.getMqttMessage(), testcases.mqttParser.getErrorMqttMessage(),
+  report(testcases.mqttParser.getMqttMessage(), testcases.mqttParser.getErrorMqttMessage(),
     testcases.mqtt.errorIdGet(), testcases.mqtt.historyGet(), testcases.rest.historyGet()
   );
 }
 
 /**
  * start local-test app
- * 
+ *
  * @returns
  */
 function start() {
@@ -367,7 +385,7 @@ function start() {
       logger.info('[start] run mqtt broker');
     }
   });
-  
+
   runHttpServer(config, testcases, function (err) {
     if (err) {
       logger.error('[start] run http server failed. error=', err);
@@ -389,7 +407,7 @@ function stop() {
   setTimeout(function () {
     logger.info('TC STOP');
     process.exit(0);
-  }, 1000);  
+  }, 1000);
 }
 
 start();
@@ -400,4 +418,3 @@ process.on('SIGINT', function () {
 process.on('SIGTERM', function () {
   stop();
 });
-

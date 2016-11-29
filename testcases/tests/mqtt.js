@@ -352,3 +352,40 @@ describe('[MQTT] TC', function () {
   });
 });
 
+describe('[Actuator]', function () {
+  var config;
+
+  try {
+    config = JSON.parse(fs.readFileSync('../hardware.json', 'utf8'));
+  }
+  catch (e) {
+    throw e;
+  }
+
+  var tcMqtt;
+  var sensorTypes = JSON.parse(fs.readFileSync('../sensorTypes.json', 'utf8'));
+
+  beforeEach(function () {
+    tcMqtt = new TcMqtt(config);
+  });
+
+  afterEach(function () {
+  });
+
+  it ('sendActuatorCmds', function (done) {
+    tcMqtt.sendActuatorCmds(function cb() {
+    });
+
+    //console.log(sensorTypes);
+    done();
+  });
+
+  it ('', function (done) {
+    tcMqtt.sendActuatorCmds();
+    setTimeout(function () {
+      tcMqtt.tcApikey();
+    }, 3000);
+  });
+
+});
+

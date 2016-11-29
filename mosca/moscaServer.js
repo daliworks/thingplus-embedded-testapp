@@ -46,10 +46,16 @@ function moscaServerStart(config) {
    * @param {any} callback
    */
   var authenticate = function (client, username, password, callback) {
-    if (username == config.gatewayId && password.toString() == config.apikey)
+    if (username == 'clientForActuator') {
+      return callback(null, true);
+    }
+
+    if (username == config.gateway.id && password.toString() == config.gateway.apikey) {
       callback(null, true);
-    else
+    }
+    else {
       callback(null, false);
+    }
 
     server.emit('gatewayId', username);
     server.emit('apikey', password);

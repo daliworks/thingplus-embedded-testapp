@@ -1,10 +1,9 @@
-var _ = require('lodash');
-var async = require('async');
-var TcMqtt = require('./mqtt.js');
-var TcRest = require('./rest.js');
-var MqttParser = require('./mqtt-parser.js');
+var _ = require('lodash'),
+    async = require('async');
 
-
+var MqttTestcase = require('./_mqtt.js'),
+    TcRest = require('./rest.js'),
+    mqttParser = require('./mqtt-parser.js');
 
 /**
  * 
@@ -13,9 +12,10 @@ var MqttParser = require('./mqtt-parser.js');
  */
 function Testcases (config) {
   this.hardwareInfo = config;
-  this.mqtt = new TcMqtt(config);
+  this.mqtt = new MqttTestcase(config.gateway.id);
   this.rest = new TcRest(config);
-  this.mqttParser = new MqttParser(config);
+  this.mqttParser = mqttParser;
+  this.mqttParser.init();
 }
 
 module.exports = Testcases;

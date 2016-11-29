@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var fs = require('fs');
 var assert = require('chai').assert;
-var MqttParser = require('../mqtt-parser.js');
+var mqttParser = require('../mqtt-parser.js');
 
 function gwStatusTopic(gatewayId) {
   return 'v/a/g/' + gatewayId + '/status';
@@ -74,8 +74,8 @@ function sensorsValuePayload(sensorInfo /*, sensorInfo, sensorInfo ...*/) {
 
 function responsePayload(responseId) {
   var payload = {
-    "id": responseId,
-    "result": ""
+    'id': responseId,
+    'result': ''
   };
 
   return JSON.stringify(payload);
@@ -99,19 +99,13 @@ function assertStatus(expect, actual) {
 
 describe('[APP] MQTT PARSER', function () {
   var gatewayId;
-  var mqttParser;
+  //var mqttParser;
   var sensor0Info;
   var gatewayInfo;
   beforeEach(function () {
+    mqttParser.init();
     gatewayId = '012345012345';
-    var config;
-    try {
-      config = JSON.parse(fs.readFileSync('../hardware.json', 'utf8'));
-    }
-    catch (e) {
-      throw e;
-    }
-    mqttParser = new MqttParser(config);
+    //mqttParser = new MqttParser();
 
     gatewayInfo = {
       "id": gatewayId,
@@ -164,9 +158,6 @@ describe('[APP] MQTT PARSER', function () {
         }
       ]
     };
-  });
-
-  afterEach(function() {
   });
 
   it ('Empty Topic', function (done) {
@@ -360,7 +351,6 @@ describe('[APP] MQTT PARSER', function () {
       assert.equal('short of value', err.message);
 
       var errorMessage = mqttParser.getErrorMqttMessage();
-      console.log(errorMessage);
       done();
     }
   });
@@ -421,9 +411,9 @@ describe('[APP] MQTT PARSER', function () {
 
     mqttParser.parse(topic, payload, null, cb);
 
-
     function cb(err, messageJson) {
-      assert.equal(payload, JSON.stringify(messageJson));
+      var expect = {'response': JSON.parse(payload)};
+      assert.deepEqual(messageJson, expect);
       done();
     }
   });
@@ -443,11 +433,12 @@ describe('[APP] MQTT PARSER', function () {
 
 describe('[APP] INVALID MQTT MESSAGE SAVE', function () {
   var gatewayId;
-  var mqttParser;
+  //var mqttParser;
 
   beforeEach(function() {
+    mqttParser.init();
     gatewayId = '012345012345';
-    mqttParser = new MqttParser('../hardware.json');
+    //mqttParser = new MqttParser('../hardware.json');
   });
 
   afterEach(function () {

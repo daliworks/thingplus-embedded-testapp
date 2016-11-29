@@ -1,6 +1,5 @@
-var _ = require('lodash');
-var async = require('async');
-var TcMqtt = require('./mqtt.js');
+var _ = require('lodash'),
+    async = require('async');
 
 var TOPIC_GW_ID_INDEX = 0;
 var TOPIC_SENSOR_ID_INDEX = 2;
@@ -10,9 +9,11 @@ var TOPIC_SENSOR_STATUS_INDEX = 3;
 var TOPIC_MQTT_STATUS_INDEX = 2;
 var TOPIC_RES_INDEX = 1;
 
+var mqttParser = {};
+
 /**
- * 
- * 
+ *
+ *
  * @param {any} id
  * @param {any} value
  * @param {any} timeout
@@ -23,8 +24,8 @@ function makeStatusJson(id, value, timeout) {
 }
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} cb
  * @param {any} topicString
  * @param {any} payloadString
@@ -35,12 +36,12 @@ function statusParse(cb, topicString, payloadString, id) {
   var payload = payloadString.split(',');
 
   var message = {};
-  message['status'] = [];
+  message.status = [];
   var statusValue = _.slice(payload, 0, 2);
   if (_.size(statusValue) != 2) {
     return tcError(cb, 'short of status', topicString, payloadString);
   }
-  message['status'].push(makeStatusJson(id, statusValue[0], statusValue[1]));
+  message.status.push(makeStatusJson(id, statusValue[0], statusValue[1]));
   payload = _.drop(payload, 2);
 
   async.eachSeries(_.chunk(payload, 3), function (statusValue, done) {
@@ -48,7 +49,7 @@ function statusParse(cb, topicString, payloadString, id) {
       return done(true);
     }
 
-    message['status'].push(makeStatusJson(statusValue[0], statusValue[1], statusValue[2]));
+    message.status.push(makeStatusJson(statusValue[0], statusValue[1], statusValue[2]));
     return done();
   },
   function (err) {
@@ -61,8 +62,8 @@ function statusParse(cb, topicString, payloadString, id) {
 }
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} cb
  * @param {any} topicString
  * @param {any} payloadString
@@ -72,13 +73,13 @@ function mqttStatusParse(cb, topicString, payloadString) {
   var payload = payloadString.split(',');
 
   var message = {};
-  message['mqttStatus'] = payloadString.toString();
+  message.mqttStatus = payloadString.toString();
   return cb && cb(null, message);
 }
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} id
  * @param {any} values
  * @returns
@@ -99,8 +100,8 @@ function makeValueJson(id, values) {
 }
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} cb
  * @param {any} topicString
  * @param {any} payloadString
@@ -117,7 +118,7 @@ function sensorValueParse(cb, topicString, payloadString, id) {
     payload = JSON.parse(payloadTemp);
   }
   catch (e) {
-    return tcError(cb, 'value format error', topicString, payloadString)
+    return tcError(cb, 'value format error', topicString, payloadString);
   }
 
   var message = {};
@@ -127,15 +128,15 @@ function sensorValueParse(cb, topicString, payloadString, id) {
     message.sensorValue.push(makeValueJson(id, payload));
   }
   catch (e) {
-    return tcError(cb, 'short of value', topicString, payloadString)
+    return tcError(cb, 'short of value', topicString, payloadString);
   }
 
   return cb && cb(null, message);
 }
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} cb
  * @param {any} topicString
  * @param {any} payloadString
@@ -143,9 +144,9 @@ function sensorValueParse(cb, topicString, payloadString, id) {
  */
 function sensorsValueParse(cb, topicString, payloadString) {
   try {
-    var payload = JSON.parse(payloadString)
+    var payload = JSON.parse(payloadString);
   } catch (e) {
-    return tcError(cb, 'value format error', topicString, payloadString)
+    return tcError(cb, 'value format error', topicString, payloadString);
   }
 
   var message = {};
@@ -156,7 +157,7 @@ function sensorsValueParse(cb, topicString, payloadString) {
       message.sensorValue.push(makeValueJson(id, values));
     }
     catch (e) {
-      return tcError(cb, 'short of value', topicString, payloadString)
+      return tcError(cb, 'short of value', topicString, payloadString);
     }
   });
 
@@ -164,16 +165,17 @@ function sensorsValueParse(cb, topicString, payloadString) {
 }
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} cb
  * @param {any} topicString
  * @param {any} payloadString
  * @returns
  */
 function responseParse(cb, topicString, payloadString) {
+  var message = {};
   try {
-    var message = JSON.parse(payloadString);
+    message.response = JSON.parse(payloadString);
   }
   catch (e) {
     return tcError(cb, 'err payload parsing', topicString, payloadString);
@@ -182,21 +184,14 @@ function responseParse(cb, topicString, payloadString) {
   return cb && cb(null, message);
 }
 
-/**
- * 
- * 
- * @param {any} config
- */
-function MqttParser(config) {
-  this.hardwareInfo = config;
-  this.mqtt = new TcMqtt(config);
+mqttParser.init = function () {
   this.errorMqttMessage = [];
   this.mqttMessage = [];
-}
+};
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} cb
  * @param {any} reason
  * @param {any} topic
@@ -214,23 +209,23 @@ function tcError(cb, reason, topic, payload) {
 }
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} topicString
  * @param {any} payload
  * @param {any} time
  * @param {any} cb
  * @returns
  */
-MqttParser.prototype.parse = function (topicString, payload, time, cb) {
+mqttParser.parse = function (topicString, payload, time, cb) {
   var that = this;
 
   this.mqttMessage.push({'topic': topicString, 'payload': payload});
 
   /* start of internal function */
   /**
-   * 
-   * 
+   *
+   *
    * @param {any} err
    * @param {any} topic
    * @param {any} payload
@@ -256,7 +251,7 @@ MqttParser.prototype.parse = function (topicString, payload, time, cb) {
   topic = topicString.slice('v/a/g/'.length).split('/');
 
   if (_.last(topic) === 'status') {
-     var statusIndex = _.indexOf(topic, 'status'); 
+     var statusIndex = _.indexOf(topic, 'status');
      if (statusIndex === TOPIC_GW_STATUS_INDEX) {
        return statusParse(_postParsingCb, topicString, payload, topic[TOPIC_GW_ID_INDEX]);
      }
@@ -288,23 +283,23 @@ MqttParser.prototype.parse = function (topicString, payload, time, cb) {
 };
 
 /**
- * 
- * 
+ *
+ *
  * @returns
  */
-MqttParser.prototype.getMqttMessage = function () {
+mqttParser.getMqttMessage = function () {
   return this.mqttMessage;
-}
+};
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} topic
  * @param {any} payload
  * @param {any} time
  * @param {any} reason
  */
-MqttParser.prototype.setErrorMqttMessage = function (topic, payload, time, reason) {
+mqttParser.setErrorMqttMessage = function (topic, payload, time, reason) {
   this.errorMqttMessage.push( {
     'topic': topic,
     'payload': payload,
@@ -314,13 +309,12 @@ MqttParser.prototype.setErrorMqttMessage = function (topic, payload, time, reaso
 };
 
 /**
- * 
- * 
+ *
+ *
  * @returns
  */
-MqttParser.prototype.getErrorMqttMessage = function () {
+mqttParser.getErrorMqttMessage = function () {
   return this.errorMqttMessage;
-}
+};
 
-module.exports = MqttParser;
-
+module.exports = mqttParser;
