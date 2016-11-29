@@ -1,391 +1,252 @@
-var fs = require('fs');
-var _ = require('lodash');
-var assert = require('chai').assert;
-var TcMqtt = require('../mqtt.js');
-var async = require('async');
-
-function gatewayStatus() {
-  return {'id': '012345012345',
-    'value': 'on',
-    'timeout': '14683483845'
-  };
-}
-
-function sensor0Status() {
-  return {'id': '012345012345-0',
-    'value': 'on',
-    'timeout': '14683483845'
-  };
-}
-
-function sensor1Status() {
-  return {'id': '012345012345-2',
-    'value': 'off',
-    'timeout': '14683484038d'
-  };
-}
-
-function sensor0Value() {
-  return {
-    "id": "012345012345-2",
-    "value": [
-      {
-        "v": "36",
-        "t": "12334838383"
-      },
-      {
-        "v": "46",
-        "t": "15838383883"
-      },
-    ]
-  };
-}
-
-function sensor1Value() {
-  return {
-    "id": "012345012345-0",
-    "value": [
-      {
-        "v": "on",
-        "t": "12334838923"
-      },
-      {
-        "v": "off",
-        "t": "15838383444"
-      },
-    ]
-  };
-}
-
-describe('[MQTT] TC GENERATION', function () {
-  it ('', function (done) {
-    var config;
-    try {
-      config = JSON.parse(fs.readFileSync('../hardware.json', 'utf8'));
-    }
-    catch (e) {
-      throw e;
-    }
-    var tcMqtt = new TcMqtt(config);
-    assert.equal('function', typeof tcMqtt["tcStatus-90a2da0fc2d8"]);
-    assert.equal('function', typeof tcMqtt["tcStatus-led-90a2da0fc2d8-0"]);
-    done();
-
-  });
-});
-
-describe('[MQTT] TC', function () {
-  var config;
-  var dummyRaw = {'topic': 'v/a/g/dummpyTopic', 'payload': 'dummyPayload'};
-  var tcMqtt = new TcMqtt(JSON.parse(fs.readFileSync('../hardware.json', 'utf8')));
-  var gatewayId;
-  var gatewayInfo;
-
-  beforeEach(function() {
-    gatewayId = '012345012345';
-    gatewayInfo = {
-      "id": gatewayId,
-      "status" : {
-        "value": "on",
-        "timeout": 14683483845
-      }
-    };
-  });
-
-  afterEach(function() {
-  });
-
-  function equalitySuccess(done, name, value) {
-    //when
-    tcMqtt[name](value, null, cb);
-
-    //then
-    function cb() {
-      done();
-    }
-  }
-
-  function equalityFail(done, name, value) {
-    //when
-    tcMqtt[name](value, null, cb);
-
-    //then
-    function cb() {
-      done();
-    }
-  }
-
-  it ('cleanSession Success', function (done) {
-    //given
-    var cleanSession = true;
-
-    //when then
-    equalitySuccess(done, 'tcCleanSession', cleanSession);
-  });
-
-  it ('keepalive Success', function (done) {
-    //given
-    var keepalive = 60;
-
-    //when then
-    equalitySuccess(done, 'tcKeepalive', keepalive);
-  });
-
-  it ('keepalive Success', function (done) {
-    //given
-    var keepalive = 30;
-
-    //when then
-    equalityFail(done, 'tcKeepalive', keepalive);
-  });
-
-  it ('apikey Success', function (done) {
-    //given
-    var apikey = "testApikey";
-
-    //when then
-    equalitySuccess(done, 'tcApikey', apikey);
-  });
-
-  it ('gatewayId Success', function(done) {
-    //given
-    var gatewayId = '012345012345';
-
-    //when then
-    equalitySuccess(done, 'tcGatewayId', gatewayId);
-  })
-
-  it ('gateawyId Failed', function (done) {
-    //given
-    var gatewayId = 'asdf';
-
-    equalityFail(done, 'tcGatewayId', gatewayId);
-  });
-
-  it ('gatewayId Tc History Get', function (done) {
-    var gatewayId;
-
-    //given
-    async.series([
-      function (asyncDone) {
-        gatewayId = '90a2da0fc2d8'
-        equalitySuccess(asyncDone, 'tcGatewayId', gatewayId);
-      },
-      function (asyncDone) {
-        gatewayId = 'wrongId'
-        equalityFail(asyncDone, 'tcGatewayId', gatewayId);
-      }],
-      function () {
-        //when
-        var history = tcMqtt.historyGet('tcGatewayId');
-
-        //then
-        assert.equal(false, history[0].result);
-        assert.equal(false, history[1].result);
-        assert.equal(true, history[2].result);
-        done();
-      });
-  });
-
-  it ('gateway Status Success', function (done) {
-
-    //given
-    var status = [gatewayStatus()]
-
-    //when
-    tcMqtt.statuses(status, null, dummyRaw, cb);
-
-    //then
-    function cb(result, testedData) {
-      done();
-    }
-  });
-
-  it ('gateway Status Invalid Value', function (done) {
-    //given
-    var status = [gatewayStatus()]
-    status[0].value = 'offfffod';
-
-    //when
-    tcMqtt.statuses(status, null, dummyRaw, cb);
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('gateway Status Invalid Timeout', function (done) {
-    //given
-    var status = [gatewayStatus()]
-    status[0].timeout = '19393dd83kd83&&';
-
-    tcMqtt.statuses(status, null, dummyRaw, cb);
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('sensor Status Success', function (done) {
-    //given
-    var status = [
-      {'id': '012345012345-0',
-        'value': 'on',
-        'timeout': '14683483845'
-      }
-    ];
-
-    tcMqtt.statuses(status, null, dummyRaw, cb);
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('Gateway and Sensor Status Success', function (done) {
-    var status = [gatewayStatus(), sensor0Status()];
-
-    tcMqtt.statuses(status, null, dummyRaw, cb);
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('Gateway and Sensor Status Failed with Invalid Sensor Id', function (done) {
-    //given
-    var status = [sensor0Status(), sensor1Status()];
-    status[1].id = "DICKDIEKD_SENSORID";
-
-    tcMqtt.statuses(status, null, dummyRaw, cb);
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('Gateway and Sensor Status Failed with Invalid Timeout', function (done) {
-    //given
-    var status = [sensor0Status(), sensor1Status()];
-    status[1].timeout = "14338INVALID83845";
-
-    tcMqtt.statuses(status, null, dummyRaw, cb);
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('Gateway and Sensor Status Failed with Invalid Timeout and Value', function (done) {
-    //given
-    var status = [gatewayStatus(), sensor0Status(), sensor1Status()];
-    status[0].id = 'D*k38dkdid_ID';
-    status[1].timeout = '14338INVALID83845';
-
-    //when
-    tcMqtt.statuses(status, null, dummyRaw, cb);
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('Sensor Value Success', function (done) {
-    //given
-    var value = [sensor0Value()];
-
-    //when
-    tcMqtt.sensorValues(value, new Date(), dummyRaw, cb); 
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('Multiple Sensor Value Success', function (done) {
-    //given
-    var value = [sensor0Value(), sensor1Value()];
-
-    //when
-    tcMqtt.sensorValues(value, new Date(), dummyRaw, cb); 
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('Sensor Value With Invalid time', function (done) {
-    //given
-    var value = [sensor0Value(), sensor1Value()];
-    value[0].value[0].t = 'di8dk10383kd03';
-
-    //when
-    tcMqtt.sensorValues(value, new Date(), dummyRaw, cb); 
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-
-  it ('Sensor Value With Invalid id', function (done) {
-    //given
-    var value = [sensor0Value(), sensor1Value()];
-    value[0].id = 'Id,dididsl';
-
-    //when
-    tcMqtt.sensorValues(value, new Date(), dummyRaw, cb); 
-
-    //then
-    function cb(result) {
-      done();
-    }
-  });
-});
-
-describe('[Actuator]', function () {
-  var config;
-
-  try {
-    config = JSON.parse(fs.readFileSync('../hardware.json', 'utf8'));
-  }
-  catch (e) {
-    throw e;
-  }
-
-  var tcMqtt;
-  var sensorTypes = JSON.parse(fs.readFileSync('../sensorTypes.json', 'utf8'));
-
+var logger = require('log4js').getLogger('MOCHA:MQTT'),
+    fs = require('fs'), _ = require('lodash'),
+    assert = require('chai').assert;
+
+var database = require('../../lib/db'),
+    MqttTestcases = require('../_mqtt.js'),
+    fixtureConfig = require('./fixture-config.js'),
+    fixtureRegisterGateway = require('./fixture-register-gateway.js')(fixtureConfig);
+
+var gatewayStatus = {
+  'id': fixtureConfig.gateway.id,
+  'value': 'on',
+  'timeout': '14683483845'
+};
+
+var temperatureStatus = {
+  'id': 'temperature-90a2da0fc2d8-0',
+  'value': 'on',
+  'timeout': '14683483845'
+};
+
+var onoffStatus = {
+  'id': 'onoff-90a2da0fc2d8-0',
+  'value': 'off',
+  'timeout': '14683484038d'
+};
+
+var temperatureValues = {
+  'id': 'temperature-90a2da0fc2d8-0',
+  "value": [
+    {
+      "v": "36",
+      "t": "12334838383"
+    },
+    {
+      "v": "46",
+      "t": "15838383883"
+    },
+  ]
+};
+
+var onoffValues = {
+  'id': 'onoff-90a2da0fc2d8-0',
+  "value": [
+    {
+      "v": "on",
+      "t": "12334838923"
+    },
+    {
+      "v": "off",
+      "t": "15838383444"
+    },
+  ]
+};
+
+describe('[MqttTestcases] Construct:', function () {
   beforeEach(function () {
-    tcMqtt = new TcMqtt(config);
   });
 
   afterEach(function () {
   });
 
-  it ('sendActuatorCmds', function (done) {
-    tcMqtt.sendActuatorCmds(function cb() {
-    });
-
-    //console.log(sensorTypes);
-    done();
+  it ('construct', function (){
+    var mqttTestcases = new MqttTestcases();
   });
 
-  it ('', function (done) {
-    tcMqtt.sendActuatorCmds();
-    setTimeout(function () {
-      tcMqtt.tcApikey();
-    }, 3000);
-  });
+  it ('static testcases added', function () {
+    //when
+    var mqttTestcases = new MqttTestcases(fixtureConfig.gateway.id);
 
+    //then
+    var testcases = mqttTestcases.getTestcases();
+    assert.equal(typeof testcases.gatewayId, 'function');
+  });
 });
 
+describe('[MqttTestcases] testcases', function () {
+  var mqttTestcases = new MqttTestcases(fixtureConfig.gateway.id);
+
+  it('gatewayId success', function () {
+    //given
+    var gatewayId = fixtureConfig.gateway.id;
+
+    //when
+    mqttTestcases.testcases.gatewayId(gatewayId);
+
+    //then
+    var results = mqttTestcases.getResults('gatewayId');
+    assert.equal(results[0].error, undefined);
+  });
+
+  it ('apikey success', function () {
+    //given
+    var apikey = fixtureConfig.gateway.apikey;
+
+    //when
+    mqttTestcases.testcases.apikey(apikey);
+
+    //then
+    var results = mqttTestcases.getResults('apikey');
+    assert.equal(results[0].error, undefined);
+  });
+
+  it ('keepalive success', function () {
+    //given
+    var keepalive = fixtureConfig.gateway.reportInterval * 2;
+
+    //when
+    mqttTestcases.testcases.keepalive(keepalive);
+
+    //then
+    var results = mqttTestcases.getResults('keepalive');
+    assert.equal(results[0].error, undefined);
+  });
+
+  it ('willMessage success', function () {
+    //given
+    var willMessage = {
+      'topic': 'v/a/g/' + fixtureConfig.gateway.id + '/mqtt/status',
+      'payload': new Buffer('err'),
+      'qos': 1,
+      'retain': true
+    };
+
+    //when
+    mqttTestcases.testcases.willMessage(willMessage);
+
+    //then
+    var results = mqttTestcases.getResults('willMessage');
+    assert.equal(results[0].error, undefined);
+  });
+});
+
+describe('MqttTestcases] dynamic testcases:', function () {
+
+  var mqttTestcases;
+
+  before (function () {
+    mqttTestcases = new MqttTestcases(fixtureConfig.gateway.id);
+  });
+
+  afterEach (function () {
+    mqttTestcases.clearHistory();
+  });
+
+  it ('gatewayStatus success', function () {
+    //given
+    var status = [gatewayStatus];
+
+    //when
+    mqttTestcases.testcases.status(status);
+
+    //then
+    var results = mqttTestcases.getResults('status');
+    assert.equal(results[0].error, undefined);
+    assert.notEqual(results[0].data, undefined);
+  });
+
+  it ('gatewayStatus and sensorStatus success', function () {
+    var status = [gatewayStatus, temperatureStatus];
+
+    //mqttTestcases.gatewayOrSensorStatus(status);
+    mqttTestcases.testcases.status(status);
+
+    var results = mqttTestcases.getResults('status');
+    assert.equal(results[0].error, undefined);
+    assert.equal(results[1].error, undefined);
+  });
+
+  it ('sensorStatus with invalid id', function () {
+    var status = [onoffStatus];
+
+    mqttTestcases.testcases.status(status);
+
+    var results = mqttTestcases.getResults('status');
+    assert.notEqual(results[0].error, undefined);
+  });
+
+  it ('sensorValue success', function () {
+    var values = [temperatureValues];
+
+    mqttTestcases.testcases.sensorValues(values);
+
+    var results = mqttTestcases.getResults('sensorValues');
+
+    assert.equal(results[0].error, undefined);
+  });
+
+  it ('sensorValue with invalid id', function () {
+    var values = [onoffValues];
+
+    mqttTestcases.testcases.sensorValues(values);
+
+    var results = mqttTestcases.getResults('sensorValues');
+
+    assert.notEqual(results[0].error, undefined);
+  });
+
+  it ('sensorValue with Invalid time', function () {
+    var values = [temperatureValues];
+    values[0].value[0].t = 'di8dk10383kd03';
+
+    mqttTestcases.testcases.sensorValues(values);
+
+    var results = mqttTestcases.getResults('sensorValues');
+    var errorResult = _.filter(results, function (r) {
+      return !_.isUndefined(r.error) && r.data.id === values[0].id;
+    });
+
+    assert.equal(_.size(errorResult), 1);
+  });
+
+  it ('sendAcutatorCommands success', function (done) {
+    var doneCalled;
+    mqttTestcases.on('publishMqttMessage', function (message) {
+      if (doneCalled) {
+        return;
+      }
+
+      doneCalled = true;
+      done();
+    });
+
+    mqttTestcases.sendActuatorCommands(mqttTestcases);
+  });
+});
+
+describe('[MqttTestcases] results', function () {
+  var mqttTestcases;
+
+  before (function () {
+    mqttTestcases = new MqttTestcases(fixtureConfig.gateway.id);
+  });
+
+  it ('missing sensors at status testcases', function () {
+    var results = mqttTestcases.getResults('status');
+    assert.notEqual(results[0].error, undefined);
+  });
+
+  it ('missing sensors at value testcases', function () {
+    //when
+    var results = mqttTestcases.getResults('sensorValues');
+
+    assert.notEqual(results[0].error, undefined);
+  });
+
+  it ('missing sensors value testcase with no argument getResults', function () {
+    var results = mqttTestcases.getResults();
+
+    assert.notEqual(results.sensorValues[0].error, undefined);
+  });
+});

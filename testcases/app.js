@@ -1,7 +1,7 @@
 var _ = require('lodash'),
     async = require('async');
 
-var MqttTestcase = require('./_mqtt.js'),
+var MqttTestcase = require('./mqtt.js'),
     TcRest = require('./rest.js'),
     mqttParser = require('./mqtt-parser.js');
 

@@ -1,549 +1,511 @@
-var fs = require('fs'),
-  _ = require('lodash'),
-  async = require('async'),
-  randomstring = require('randomstring'),
-  util = require('util'),
-  Ajv = require('ajv'),
-  events = require('events');
+var _ = require('lodash'),
+    util = require('util'),
+    async = require('async'),
+    Ajv = require('ajv'),
+    events =require('events'),
+    randomstring = require('randomstring'),
+    logger = require('log4js').getLogger('TC:MQTT');
 
+var database = require('../lib/db');
 
-var TC_SENSOR_VALUE_PREFIX = 'tcValue-';
-var TC_STATUS_PREFIX = 'tcStatus-';
-var SENSOR_TYPES = JSON.parse(fs.readFileSync('sensorTypes.json', 'utf8'));
-var ACTUATOR_CMD_RESPONSE_TIMEOUT = 30000;
-//var ACTUATOR_CMD_RESPONSE_TIMEOUT = 1000;
-
-/**
- * 
- * 
- * @param {any} tcName
- */
-function logStartTest(tcName) {
-  console.log('[TESTING] ' + tcName);
-}
+var STATUS_TESTCASE_PREFIX = 'status-';
+var VALUE_TESTCASE_PREFIX = 'value-';
+var ACTUATOR_CMD_RESPONSE_TIMEOUT_MS = 30000;
 
 /**
- * 
- * 
- * @param {any} result
- * @param {any} reason
+ * _sendActuatorCommand - send actuator commands
+ *
+ * @param  {object} actuator
+ * @param  {object} actuatorType
+ * @param  {function} cb
+ * @return
  */
-function logTestResult(result, reason) {
-  if (result) {
-    console.log('\t PASS');
-  }
-  else {
-    console.log('\t FAIL. ' + reason);
-  }
-}
-
-/**
- * 
- * 
- * @param {any} hardwareInfo
- * @param {any} id
- * @returns
- */
-function isValidId(hardwareInfo, id) {
-  if (hardwareInfo.gatewayId === id)
-    return true;
-
-  var match = false;
-  _.forEach(hardwareInfo.sensors, function (sensor) {
-    if (sensor.id === id) {
-      match = true;
-    }
-  });
-
-  return match;
-}
-
-/**
- * 
- * 
- * @param {any} hardwareInfo
- * @returns
- */
-function sensorIdsInit(hardwareInfo) {
-  var sensorIds = [];
-
-  _.forEach(hardwareInfo.devices, function (device) {
-    _.forEach(device.sensors, function (sensor) {
-      if (sensor.category === 'sensor') {
-        sensorIds.push(sensor.id);
-      }
-    });
-  });
-
-  return sensorIds;
-}
-
-/**
- * 
- * 
- * @param {any} hardwareInfo
- * @returns
- */
-function actuatorIdsInit(hardwareInfo) {
-  var actuatorIds = [];
-
-  _.forEach(hardwareInfo.devices, function (device) {
-    _.forEach(device.sensors, function (sensor) {
-      if (sensor.category === 'actuator') {
-        actuatorIds.push(sensor.id);
-      }
-    });
-  });
-
-  return actuatorIds;
-}
-
-function statusIdsInit(hardwareInfo) {
-  var statusIds = [];
-
-  _.forEach(hardwareInfo.devices, function (device) {
-    _.forEach(device.sensors, function (sensor) {
-        statusIds.push(sensor.id);
-    });
-  });
-
-  statusIds.push(hardwareInfo.gatewayId);
-
-  return statusIds;
-}
-
-/**
- * 
- * 
- * @param {any} s
- * @param {any} cb
- * @returns
- */
-function isStatusValid(s, cb) {
-  if (!_.includes(['on', 'off'], s.value.toLowerCase())) {
-    return cb(false, 'STATUS ERROR(' + s.value + ')');
-  }
-
-  // STATUS는 미래시간일 경우 FALSE
-  // 과거 시간도 X 시간 이전이면 FALSE
-  if (s.timeout && isNaN(s.timeout)) {
-    return cb(false, 'TIMEOUT ERROR(' + s.timeout + ')');
-  }
-
-  cb(true);
-}
-
-/**
- * 
- * 
- * @param {any} values
- * @param {any} validValuecb
- */
-function isValueValid (values, validValuecb) {
-  async.each(values, function (value, _asyncDone) {
-    if (value.t && isNaN(value.t)) {
-      return _asyncDone('TIME ERROR(' + value.t + ')');
-    }
-
-    //TODO FIXME VALUE CHECK HERE AFTER SENSERTYPE AVAIL
-    _asyncDone();
-  },
-  function (err) {
-    validValuecb(!err, err);
-  });
-}
-
-/**
- * 
- * 
- * @param {any} config
- */
-function TcMqtt (config) {
-  this.hardwareInfo = config;
-
-  this.sensorValueIds = sensorIdsInit(this.hardwareInfo);
-  this.actuatorIds = actuatorIdsInit(this.hardwareInfo);
-  this.statusIds = statusIdsInit(this.hardwareInfo);
-  this.generation();
-
-  this.errorId = [];
-  this.history = {};
-  _.map(_.filter(_.keysIn(this), function (key) {
-    return _.isFunction(this[key]) && _.startsWith(key, 'tc');}.bind(this)),
-  function (tc) {
-      this.history[tc] = [];//testcases.push({name: tc, result: {}})
-  }.bind(this));
-}
-
-util.inherits(TcMqtt, events.EventEmitter);
-
-/*
-   history = {
-   { "tcStatus-012345012345": []},
-   { "tcStatus-012345012345-0": []},
-   { "tcApikey": []},
-   { "tcGatewayId": [
-      {"result": true, "time": ...},
-      {"result": false, "reason": ..., "time"}
-    ]}
-   },
-*/
-
-/**
- * 
- */
-TcMqtt.prototype.generation = function () {
+ function _sendActuatorCommand(actuator, actuatorType, cb) {
   var that = this;
+  var topic = 'v/a/g/' + this.gatewayId + '/req';
 
-  _.forEach(this.sensorValueIds, function (id) {
-     that[TC_SENSOR_VALUE_PREFIX + id] = isValueValid;
-  });
+  async.eachOfSeries(actuatorType.commands, function (options, cmd, asyncDone) {
+    var message = {};
+    message.id = randomstring.generate({
+      length:9,
+      charset:'alphabetic'
+    });
 
-  _.forEach(this.statusIds, function (id) {
-     that[TC_STATUS_PREFIX + id] = isStatusValid;
-  });
-};
+    message.method = 'controlActuator';
+    message.params = {};
+    message.params.id = actuator.id;
+    message.params.cmd = cmd;
+    message.params.options = {};
 
-/**
- * 
- * 
- * @param {any} expect
- * @param {any} actual
- * @param {any} time
- * @param {any} cb
- * @returns
- */
-TcMqtt.prototype.equal = function (expect, actual, time, cb) {
-  var result = _.isEqual(expect, actual);
-  var reason;
-
-  if (!result) {
-    reason = 'expect:'+ expect +', actual:' + actual;
-  }
-
-  return cb && cb (result, reason);
-};
-
-/**
- * 
- * 
- * @param {any} statuses
- * @param {any} time
- * @param {any} raw
- * @param {any} cb
- */
-TcMqtt.prototype.statuses = function (statuses, time, raw, cb) {
-  var that = this;
-
-  async.each(statuses, function (status, asyncDone) {
-    var tcName;
-
-    if (!_.includes(that.statusIds, status.id)) {
-
-      that.errorIdSet(status.id, time, raw);
-      return asyncDone();
-    }
-
-    tcName = TC_STATUS_PREFIX + status.id;
-    logStartTest(tcName);
-    that[tcName](status, function (result, reason) {
-        that.historySet(tcName, result, time, reason, raw);
-        asyncDone();
-      });
-    },
-    function (err) {
-      if (cb) {
-        cb();
-      }
-  });
-};
-
-/**
- * 
- * 
- * @param {any} values
- * @param {any} time
- * @param {any} raw
- * @param {any} cb
- */
-TcMqtt.prototype.sensorValues = function (values, time, raw, cb) {
-  var that = this;
-
-  async.each(values, function (value, asyncDone) {
-    var tcName;
-
-    if (!_.includes(that.sensorValueIds, value.id)) {
-      that.errorIdSet(value.id, time, raw);
-      return asyncDone();
-    }
-
-    tcName = TC_SENSOR_VALUE_PREFIX + value.id;
-    logStartTest(tcName);
-    if (!that[tcName] && typeof that[tcName] !== 'function') {
-      return asyncDone();
-    }
-
-    that[tcName](value, function (result, reason) {
-        if (result) {
-          that.historySet(tcName, result, time, raw);
+    _.forEach(options, function (option) {
+      if (option.required) {
+        if (option.type === 'text') {
+          message.params.options[option.name] = 'dummyText';
         }
-        else {
-          that.historySet(tcName, result, time, reason, raw);
+        else if (option.type === 'number') {
+          message.params.options[option.name] = option.min;
         }
-
-        asyncDone();
-      });
-    },
-    function (err) {
-      if (cb) {
-        cb();
       }
+    });
+
+    logger.info('[sendActuatorCommand] cmd:%s opt:%s', cmd, JSON.stringify(message.params.options));
+
+    that.emit('publishMqttMessage', {'topic':topic, 'payload':JSON.stringify(message)});
+    that.sentActuatorCommands[message.id] = {'type': actuator.type,
+      'cmd': cmd, 'message': message, 'time': Date.now()};
+    setTimeout(function () {
+      asyncDone();
+    }, 1000);
+  }, function () {
+    cb();
   });
-};
+}
 
 /**
- * 
- * 
- * @param {any} gatewayId
- * @param {any} time
- * @param {any} cb
+ * _actuatorCommandResponseTestcase - verify response of actuator commands
+ *
+ * @param  {object} response
+ * @param  {number} time
+ * @return
  */
-TcMqtt.prototype.tcGatewayId = function (gatewayId, time, cb) {
-  logStartTest('tcGatewayId');
+function _actuatorCommandResponseTestcase (response, time) {
+  var error, sensorTypes;
+  var sentActuatorCommand = this.sentActuatorCommands[response.id];
 
-  this.equal(this.hardwareInfo.gatewayId, gatewayId, time, function (result, reason){
-    this.historySet('tcGatewayId', result, time, reason);
-    if (cb) {
-      cb();
+  if (!time) {
+    time = Date.now();
+  }
+
+  if (!sentActuatorCommand) {
+    error = util.format('invalid response id(%s)', response.id);
+    delete this.sentActuatorCommands[response.id];
+    that.setResults('actuatorResponse', error, response, time);
+    return;
+  }
+
+  if (time > sentActuatorCommand.time + ACTUATOR_CMD_RESPONSE_TIMEOUT_MS) {
+    error = util.format('response timeout');
+    delete this.sentActuatorCommands[response.id];
+    that.setResults('actuatorResponse', error, response, time);
+    return;
+  }
+
+  sensorTypes = database.findAll('sensorTypes');
+
+  var sensorType = _.filter(sensorTypes, {'id': sentActuatorCommand.type})[0];
+  if (_.isUndefined(sensorType)) {
+    error = util.format('unknown sensorType(%s)', sentActuatorCommand.type);
+    that.setResults('actuatorResponse', error, response, time);
+    return;
+  }
+
+  var ajv = new Ajv();
+  var validate = ajv.compile(sensorType.contentType);
+  var valid = validate(response);
+
+  if (!valid) {
+    error = 'invalid response';
+  }
+
+  this.setResults('actuatorResponse', error, response, time);
+
+  delete this.sentActuatorCommands[response.id];
+}
+
+
+/**
+ * _sensorStatusTestcase - verify gateway or sesnor status
+ *
+ * @param  {array} statusArray
+ * @param  {number} time
+ * @return
+ */
+function _sensorStatusTestcase (statusArray, time) {
+  var that = this;
+  var testcaseName, error;
+
+  var sensors = database.findAll('sensors');
+  var sensorInfo;
+
+  _.forEach(statusArray, function (status) {
+    error = undefined;
+
+    if (status.id !== that.gatewayId) {
+      sensorInfo = _.filter(sensors, function (s) {
+        return s.id === status.id;
+      });
+
+      if (_.isEmpty(sensorInfo)) {
+        error = util.format('invalid id(%s)', status.id);
+        that.setResults('status', error, status, time);
+        return true;
+      }
     }
 
-  }.bind(this));
-};
+    if (!_.includes(['on', 'off'], status.value.toLowerCase())) {
+      error = util.format('invalid status(%s)', status.value);
+      that.setResults('status', error, status, time);
+      return;
+    }
+
+    if (!status.timeout || _.isNaN(status.timeout)) {
+      error = 'invalid timeout';
+    }
+
+    that.setResults('status', error, status, time);
+  });
+}
 
 /**
- * 
- * 
- * @param {any} apikey
- * @param {any} time
- * @param {any} cb
+ * _sensorValuesTestcase - veryfi sensor values
+ *
+ * @param  {object} sensorValues
+ * @param  {number} time
+ * @return
  */
-TcMqtt.prototype.tcApikey = function (apikey, time, cb) {
-  logStartTest('tcApikey');
+function _sensorValuesTestcase (sensorValues, time) {
+  var that = this;
+  var testcaseName, error;
 
-  this.equal(this.hardwareInfo.apikey, apikey, time, function (result, reason){
-    this.historySet('tcApikey', result, time, reason);
-    cb && cb();
-  }.bind(this));
-};
+  var sensors = database.findAll('sensors');
+
+  _.forEach(sensorValues, function (sensorValue) {
+    var sensorInfo = _.filter(sensors, function (s) {
+      return s.id === sensorValue.id && s.category === 'sensor';
+    });
+
+    error = undefined;
+
+    if (_.isEmpty(sensorInfo)) {
+      error = util.format('invalid id(%s)', sensorValue.id);
+      that.setResults('sensorValues', error, sensorValue, time);
+      return true;
+    }
+
+    _.forEach(sensorValue.value, function (v) {
+      if (!v.t || isNaN(v.t)) {
+          error = 'invalid time(' + v.t + ')';
+          return false;
+      }
+    });
+
+    that.setResults('sensorValues', error, sensorValue, time);
+  });
+}
 
 /**
- * 
- * 
- * @param {any} cleanSession
- * @param {any} time
- * @param {any} cb
+ * _gatewayIdTestcase - verify gatewayId
+ *
+ * @param  {string} gatewayId
+ * @param  {number} time
+ * @return
  */
-TcMqtt.prototype.tcCleanSession = function (cleanSession, time, cb) {
-  logStartTest('tcCleanSession');
+function _gatewayIdTestcase(gatewayId, time) {
+  var error;
 
-  this.equal(true, cleanSession, time, function (result, reason){
-    this.historySet('tcCleanSession', result, time, reason);
-    cb && cb();
-  }.bind(this));
-};
+  logger.info('gatewayId testcase running');
+
+  if (!_.isEqual(gatewayId, this.gatewayId)) {
+      error = 'gatewayId is not match. expect:' + this.gatewayId + ' recevice:' + gatewayId;
+  }
+
+  this.setResults('gatewayId', error, gatewayId, time);
+}
 
 /**
- * 
- * 
- * @param {any} willMessage
- * @param {any} time
- * @param {any} cb
+ * _apikeyTestcase - verify apikey
+ *
+ * @param  {string} apikey
+ * @param  {number} time
+ * @return
  */
-TcMqtt.prototype.tcWillMessage = function (willMessage, time, cb) {
-  logStartTest('tcWillMessage');
+function _apikeyTestcase (apikey, time) {
+  logger.info('apikey verifing');
 
-  var expectWill = {
-    'topic': 'v/a/g/' + this.hardwareInfo.gatewayId + '/mqtt/status',
+  var error;
+  var gatewayInfo = database.findOne('gateways', this.gatewayId);
+  if (_.isUndefined(gatewayInfo)) {
+    logger.error('gatewayInfo is not in the db');
+    return;
+  }
+
+  if (!_.isEqual(gatewayInfo.apikey, apikey)) {
+    error = 'apikey is not match. expect:' + gatewayInfo.apikey + ' receive:' + apikey;
+  }
+
+  this.setResults('apikey', error, apikey, time);
+}
+
+/**
+ * _keepaliveTestcase - verify keepalive
+ *
+ * @param  {number} keepalive
+ * @param  {number} time
+ * @return
+ */
+function _keepaliveTestcase (keepalive, time) {
+  logger.info('keepalive verifing');
+
+  var MAX_KEEPALIVE = 60 * 10;
+  var error, expectKeepalive;
+  var gatewayInfo = database.findOne('gateways', this.gatewayId);
+  if (_.isUndefined(gatewayInfo)) {
+    logger.error('gatewayInfo is not in the db');
+    return;
+  }
+
+  expectKeepalive = gatewayInfo.reportInterval/1000 * 2;
+  if (expectKeepalive > MAX_KEEPALIVE) {
+    expectKeepalive = MAX_KEEPALIVE;
+  }
+
+  if (!_.isEqual(expectKeepalive, keepalive)) {
+    error = 'keepalive is not match. expect:' + expectKeepalive + ' receive:' + keepalive;
+  }
+
+  this.setResults('keepalive', error, keepalive, time);
+}
+
+/**
+ * _willMessageTestcase - verify will message
+ *
+ * @param  {object} willMessage
+ * @param  {number} time
+ * @return
+ */
+function _willMessageTestcase (willMessage, time) {
+  logger.info('willMessage verifing');
+
+  var error;
+  var expectWillMessage = {
+    'topic': 'v/a/g/' + this.gatewayId + '/mqtt/status',
     'payload': new Buffer('err'),
     'qos': 1,
     'retain': true
   };
 
-  this.equal(expectWill, willMessage, time, function (result, reason){
-    this.historySet('tcWillMessage', result, time, reason);
-    cb && cb();
-  }.bind(this));
+  if (!_.isEqual(expectWillMessage, willMessage)) {
+    error = 'willMessage is not match. expect:' + expectWillMessage + ' recevice:' + willMessage;
+  }
+
+  this.setResults('willMessage', error, willMessage, time);
+}
+
+/**
+ * _cleanSessionTestcase - verify clean sessin
+ *
+ * @param  {boolean} cleanSession
+ * @param  {number} time
+ * @return
+ */
+function _cleanSessionTestcase (cleanSession, time) {
+  logger.info('cleanSession testcase running');
+
+  var error;
+  var expectCleanSession = true;
+
+  if (!_.isEqual(expectCleanSession, cleanSession)) {
+    error = 'clean session is not match. expect:true but receive false';
+  }
+
+  this.setResults('cleanSession', error, cleanSession, time);
+}
+
+/**
+ * MqttTestcases - MqttTestcases Object
+ *
+ * @constructor
+ * @param  {string} gatewayId
+ * @return
+ */
+function MqttTestcases (gatewayId) {
+  logger.info('new instance. gatewayId:%s', gatewayId);
+
+  this.gatewayId = gatewayId;
+  this.testcases = {};
+  this.results = {};
+  this._testcasesInit();
+}
+
+util.inherits(MqttTestcases, events.EventEmitter);
+
+/**
+ * getTestcases - get mqtt testcases
+ *
+ * @return
+ */
+MqttTestcases.prototype.getTestcases = function () {
+  return this.testcases;
 };
 
 /**
- * 
- * 
- * @param {any} keepalive
- * @param {any} time
- * @param {any} cb
+ * _testcaseInit - initialize testcases
+ *
+ * @return
  */
-TcMqtt.prototype.tcKeepalive = function (keepalive, time, cb) {
-  logStartTest('tcKeepalive');
-
-  var MAX_KEEPALIVE = 60 * 10;
-  var expectation = this.hardwareInfo.reportInterval > MAX_KEEPALIVE ?
-    MAX_KEEPALIVE : this.hardwareInfo.reportInterval * 2;
-
-  this.equal(expectation, keepalive, time, function (result, reason){
-    this.historySet('tcKeepalive', result, time, reason);
-    cb && cb();
-  }.bind(this));
-};
-
-/**
- * 
- * 
- * @param {any} tcName
- * @returns
- */
-TcMqtt.prototype.historyGet = function (tcName) {
-  if (tcName) {
-    return this.history[tcName];
-  }
-  else {
-    return this.history;
-  }
-};
-
-/**
- * 
- * 
- * @param {any} tcName
- * @param {any} result
- * @param {any} time
- * @param {any} reason
- * @param {any} raw
- */
-TcMqtt.prototype.historySet = function (tcName, result, time, reason, raw) {
-  if (!time) {
-    time = new Date();
-  }
-
-  logTestResult(result, reason);
-
-  if (result) {
-    this.history[tcName].push({'result': result, 'time':time});
-  }
-  else {
-    var history = {'result': result, 'reason': reason, 'time': time};
-    if (raw) {
-      if (typeof raw === 'object') {
-        raw = JSON.stringify(raw);
-      }
-      history.raw = raw;
-    }
-
-    this.history[tcName].push(history);
-  }
-};
-
-/**
- * 
- * 
- * @param {any} id
- * @param {any} time
- * @param {any} raw
- */
-TcMqtt.prototype.errorIdSet = function (id, time, raw) {
-  this.errorId.push({'id': id, 'time': time, 'raw': raw});
-};
-
-/**
- * 
- * 
- * @returns
- */
-TcMqtt.prototype.errorIdGet = function () {
-  return this.errorId;
-};
-
-TcMqtt.prototype.tcActuator = function (message, time) {
-  var actuatorCommand = this.actuatorCmdHistory[message.id];
-
-  if (!actuatorCommand) {
-    this.historySet('tcActuator', false, time, 'Invaild Id', message);
-    return;
-  }
-
-  var sensorType = _.filter(SENSOR_TYPES, {'id': actuatorCommand.type})[0];
-  var ajv = new Ajv();
-  var validate = ajv.compile(sensorType.contentType);
-  var valid = validate(message);
-
-  if (valid) {
-    this.historySet('tcActuator', true, time, message);
-  }
-  else {
-    this.historySet('tcActuator', false, time, 'JSON SCHEMA FAIL', message);
-  }
-
-  delete this.actuatorCmdHistory[message.id];
-};
-
-TcMqtt.prototype.sendActuatorCmds = function () {
-  if (!this.actuatorCmdHistory) {
-    this.actuatorCmdHistory = {};
-  }
-
-  console.log('sendActuatorCmds');
-
+MqttTestcases.prototype._testcasesInit = function () {
   var that = this;
-  var topic = 'v/a/g/' + this.hardwareInfo.gatewayId + '/req';
+  var staticTestcases = [
+    {'name': 'gatewayId', 'testcase': _gatewayIdTestcase},
+    {'name': 'apikey', 'testcase': _apikeyTestcase},
+    {'name': 'keepalive', 'testcase': _keepaliveTestcase},
+    {'name': 'willMessage', 'testcase': _willMessageTestcase},
+    {'name': 'cleanSession', 'testcase': _cleanSessionTestcase},
+    {'name': 'sensorValues', 'testcase': _sensorValuesTestcase},
+    {'name': 'status', 'testcase': _sensorStatusTestcase},
+    {'name': 'actuatorResponse', 'testcase': _actuatorCommandResponseTestcase},
+  ];
 
-  _.forEach(this.hardwareInfo.devices, function (device) {
-    _.chain(device.sensors)
-     .filter({'category': 'actuator'})
-     .map(function (actuator) {
-       var sensorType = _.filter(SENSOR_TYPES, {'id': actuator.type})[0];
-       async.eachOfSeries(sensorType.commands, function (options, cmd, asyncDone) {
-         var message = {};
-         message.id = randomstring.generate({
-           length:9,
-           charset:'alphabetic'
-         });
-
-         message.method = 'controlActuator';
-         message.params = {};
-         message.params.id = actuator.id;
-         message.params.cmd = cmd;
-         message.params.options = {};
-
-         _.forEach(options, function (option) {
-           if (option.required) {
-             if (option.type === 'text') {
-               message.params.options[option.name] = 'dummyText';
-             }
-             else if (option.type === 'number') {
-               message.params.options[option.name] = option.min;
-             }
-           }
-         });
-
-         that.emit('mqttPub', {'topic':topic, 'message':message});
-         that.actuatorCmdHistory[message.id] = {'type': actuator.type, 'cmd': cmd, 'message': message};
-
-         setTimeout(function () {
-           if (that.actuatorCmdHistory[message.id]) {
-             delete that.actuatorCmdHistory[message.id];
-             that.historySet('tcActuator', false, new Date().getTime(), 'command "' + cmd + '" response timeout');
-           }
-
-         }, ACTUATOR_CMD_RESPONSE_TIMEOUT);
-
-         setTimeout(function () {
-           asyncDone();
-         }, 1000);
-       },
-       function (err) {
-       });
-     })
-     .value();
+  _.forEach(staticTestcases, function (staticTestcase) {
+    //that._addTestcase(staticTestcase.name, staticTestcase.testcase);
+    that.testcases[staticTestcase.name] = staticTestcase.testcase.bind(that);
+    that.results[staticTestcase.name] = [];
   });
 };
 
-module.exports = TcMqtt;
+/**
+ * sensorValues - verify sensor valueS
+ *
+ * @param  {object} values
+ * @param  {number} time
+ * @return
+ */
+MqttTestcases.prototype.sensorValues = function (values, time) {
+  var that = this;
+  var testcaseName, error;
+
+  _.forEach(values, function (v) {
+    testcaseName = VALUE_TESTCASE_PREFIX + v.id;
+    if (!_.isEqual('function', typeof that.testcases[testcaseName])) {
+      error = 'unknown id:' + v.id;
+      logger.error(error);
+      that.setResults('sensorValues', error, {'id': v.id}, time);
+      return true;
+    }
+
+    that.testcases[testcaseName](v, time);
+  });
+};
+
+/**
+ * _addMissingSensorsError - add error at result if not tested sensor exists.
+ *
+ * @param  {string} testcaseName
+ * @return {object}              the result of tested testcases
+ */
+MqttTestcases.prototype._addMissingSensorsError = function (testcaseName) {
+  var sensors = database.findAll('sensors');
+  var that = this;
+  var error;
+  var requiredSensorIds;
+
+  if (!sensors) {
+    logger.warn('No sensors in gateway');
+    return;
+  }
+
+  var results = _.cloneDeep(this.results[testcaseName]);
+
+  if (testcaseName === 'status') {
+    requiredSensorIds = _.concat(this.gatewayId, _.map(sensors, 'id'));
+  }
+  else {
+    requiredSensorIds = _.map(sensors, 'id');
+  }
+
+  var testcasePassedSensors = _.map(results, function (sensor) {
+    return sensor.data.id;
+  });
+  var notTestedSensorIds = _.difference(requiredSensorIds, testcasePassedSensors);
+
+  _.forEach(notTestedSensorIds, function (sensorId) {
+    error = util.format('%s not tested', sensorId);
+    results.push({'error': error, 'data': {'id': sensorId}, 'time': Date.now()});
+  });
+
+  return results;
+};
+
+/**
+ * getResults - get testcases results
+ *
+ * @param  {string} testcaseName
+ * @return {object}              the result of tested testcases
+ */
+MqttTestcases.prototype.getResults = function (testcaseName) {
+  if (testcaseName) {
+    if (testcaseName === 'status') {
+      return this._addMissingSensorsError('status');
+    }
+    else if (testcaseName === 'sensorValues') {
+      return this._addMissingSensorsError('sensorValues');
+    }
+    else {
+      return _.cloneDeep(this.results[testcaseName]);
+    }
+  }
+  else {
+    var results = _.cloneDeep(this.results);
+    results.status = this._addMissingSensorsError('status');
+    results.sensorValues = this._addMissingSensorsError('sensorValues');
+    return results;
+  }
+};
+
+/**
+ * setResults - set testcase results
+ *
+ * @param  {string} testcaseName
+ * @param  {string} error
+ * @param  {object} receivedData
+ * @param  {number} time
+ * @return
+ */
+MqttTestcases.prototype.setResults = function (testcaseName, error, receivedData, time) {
+  if (error) {
+    logger.error('[%s] verify faied. error:%s', testcaseName, error);
+  }
+  else {
+    logger.info('[%s] pass', testcaseName);
+  }
+
+  this.results[testcaseName].push({'error': error, 'data': receivedData, 'time': time});
+};
+
+/**
+ * cleanHistory - clear testcases results
+ *
+ * @return
+ */
+MqttTestcases.prototype.clearHistory = function  () {
+  _.forEach(this.results, function (r) {
+    r.length = 0;
+  });
+};
+
+/**
+ * sendActuatorCommands - send every actuators commands
+ *
+ * @param  {object} testcaseIntance
+ * @return
+ */
+MqttTestcases.prototype.sendActuatorCommands = function (testcaseIntance) {
+  var that = testcaseIntance;
+  var sensorTypes = database.findAll('sensorTypes');
+  var sensors = database.findAll('sensors');
+
+  if (_.isUndefined(this.sentActuatorCommands)) {
+    this.sentActuatorCommands = {};
+  }
+
+  var actuators = _.filter(sensors, function (s) {
+    return s.category === 'actuator';
+  });
+
+  async.eachSeries(actuators, function(actuator, asyncDone) {
+    var actuatorType = _.filter(sensorTypes, {'id': actuator.type})[0];
+    _sendActuatorCommand.call(that, actuator, actuatorType, asyncDone);
+  });
+};
+
+module.exports = MqttTestcases;
