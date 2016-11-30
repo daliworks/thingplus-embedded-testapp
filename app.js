@@ -350,7 +350,7 @@ function runHttpServer(config, tc, cb) {
  */
 function generateReport() {
   report(testcases.mqttParser.getMqttMessage(), testcases.mqttParser.getErrorMqttMessage(),
-    testcases.mqtt.errorIdGet(), testcases.mqtt.historyGet(), testcases.rest.historyGet()
+    testcases.mqtt.getResults(), testcases.rest.historyGet()
   );
 }
 

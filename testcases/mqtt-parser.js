@@ -12,27 +12,29 @@ var TOPIC_RES_INDEX = 1;
 var mqttParser = {};
 
 /**
+ * makeStatusJson
  *
- *
- * @param {any} id
- * @param {any} value
- * @param {any} timeout
- * @returns
+ * @param  {string} id
+ * @param  {string} value
+ * @param  {number} timeout
+ * @return {object}         status object
  */
 function makeStatusJson(id, value, timeout) {
   return {'id': id, 'value': value, 'timeout': timeout};
 }
 
+
 /**
+ * statusParse - parsing single status message
  *
- *
- * @param {any} cb
- * @param {any} topicString
- * @param {any} payloadString
- * @param {any} id
- * @returns
+ * @param  {function} cb
+ * @param  {string} topicString
+ * @param  {string} payloadString
+ * @param  {string} id
+ * @return
  */
 function statusParse(cb, topicString, payloadString, id) {
+
   var payload = payloadString.split(',');
 
   var message = {};
@@ -61,13 +63,14 @@ function statusParse(cb, topicString, payloadString, id) {
   });
 }
 
+
 /**
+ * mqttStatusParse - parsing multiple of gateway and sensor status message
  *
- *
- * @param {any} cb
- * @param {any} topicString
- * @param {any} payloadString
- * @returns
+ * @param  {function} cb
+ * @param  {string} topicString
+ * @param  {string} payloadString
+ * @return
  */
 function mqttStatusParse(cb, topicString, payloadString) {
   var payload = payloadString.split(',');
@@ -77,12 +80,13 @@ function mqttStatusParse(cb, topicString, payloadString) {
   return cb && cb(null, message);
 }
 
+
 /**
+ * makeValueJson
  *
- *
- * @param {any} id
- * @param {any} values
- * @returns
+ * @param  {string} id
+ * @param  {string} values
+ * @return {object}
  */
 function makeValueJson(id, values) {
   /* values = [time, value, time , value] */
@@ -99,14 +103,15 @@ function makeValueJson(id, values) {
   return {"id": id, "value": value};
 }
 
+
 /**
+ * sensorValueParse - paring single sensor value
  *
- *
- * @param {any} cb
- * @param {any} topicString
- * @param {any} payloadString
- * @param {any} id
- * @returns
+ * @param  {function} cb
+ * @param  {string} topicString
+ * @param  {string} payloadString
+ * @param  {string} id
+ * @return
  */
 function sensorValueParse(cb, topicString, payloadString, id) {
   var payloadTemp = payloadString;
@@ -135,12 +140,12 @@ function sensorValueParse(cb, topicString, payloadString, id) {
 }
 
 /**
+ * sensorsValueParse - parsing multiple sensor values
  *
- *
- * @param {any} cb
- * @param {any} topicString
- * @param {any} payloadString
- * @returns
+ * @param  {function} cb
+ * @param  {string} topicString
+ * @param  {string} payloadString
+ * @return
  */
 function sensorsValueParse(cb, topicString, payloadString) {
   try {
@@ -164,13 +169,14 @@ function sensorsValueParse(cb, topicString, payloadString) {
   return cb && cb(null, message);
 }
 
+
 /**
+ * responseParse - parsing actuator response
  *
- *
- * @param {any} cb
- * @param {any} topicString
- * @param {any} payloadString
- * @returns
+ * @param  {function} cb
+ * @param  {string} topicString
+ * @param  {string} payloadString
+ * @return
  */
 function responseParse(cb, topicString, payloadString) {
   var message = {};
@@ -184,19 +190,25 @@ function responseParse(cb, topicString, payloadString) {
   return cb && cb(null, message);
 }
 
+/**
+ * init - initialization
+ *
+ * @return
+ */
 mqttParser.init = function () {
   this.errorMqttMessage = [];
   this.mqttMessage = [];
 };
 
+
 /**
+ * tcError - error object maker
  *
- *
- * @param {any} cb
- * @param {any} reason
- * @param {any} topic
- * @param {any} payload
- * @returns
+ * @param  {function} cb
+ * @param  {string} reason
+ * @param  {string} topic
+ * @param  {string} payload
+ * @return
  */
 function tcError(cb, reason, topic, payload) {
   if (!cb)
@@ -209,28 +221,19 @@ function tcError(cb, reason, topic, payload) {
 }
 
 /**
+ * parse - parsing mqtt message
  *
- *
- * @param {any} topicString
- * @param {any} payload
- * @param {any} time
- * @param {any} cb
- * @returns
+ * @param  {string} topicString
+ * @param  {string} payload
+ * @param  {number} time
+ * @param  {function} cb
+ * @return
  */
 mqttParser.parse = function (topicString, payload, time, cb) {
   var that = this;
 
   this.mqttMessage.push({'topic': topicString, 'payload': payload});
 
-  /* start of internal function */
-  /**
-   *
-   *
-   * @param {any} err
-   * @param {any} topic
-   * @param {any} payload
-   * @returns
-   */
   function _postParsingCb(err, topic, payload) {
     if (err) {
       that.setErrorMqttMessage(topic, payload, time, err.message);
@@ -282,22 +285,25 @@ mqttParser.parse = function (topicString, payload, time, cb) {
     return tcError(_postParsingCb, 'unknown topic', topicString, payload);
 };
 
+
 /**
+ * getMqttMessage - get all of received mqtt messages
  *
- *
- * @returns
+ * @return {object}
  */
 mqttParser.getMqttMessage = function () {
   return this.mqttMessage;
 };
 
+
 /**
+ * setErrorMqttMessage - set up parsing errored mqtt message
  *
- *
- * @param {any} topic
- * @param {any} payload
- * @param {any} time
- * @param {any} reason
+ * @param  {string} topic
+ * @param  {string} payload
+ * @param  {number} time
+ * @param  {string} reason
+ * @return
  */
 mqttParser.setErrorMqttMessage = function (topic, payload, time, reason) {
   this.errorMqttMessage.push( {
@@ -308,10 +314,11 @@ mqttParser.setErrorMqttMessage = function (topic, payload, time, reason) {
   });
 };
 
+
 /**
+ * getErrorMqttMessage - get parsing error mqtt messages
  *
- *
- * @returns
+ * @return {type}  description
  */
 mqttParser.getErrorMqttMessage = function () {
   return this.errorMqttMessage;

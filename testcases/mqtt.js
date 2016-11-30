@@ -18,7 +18,6 @@ var ACTUATOR_CMD_RESPONSE_TIMEOUT_MS = 30000;
  * @param  {object} actuator
  * @param  {object} actuatorType
  * @param  {function} cb
- * @return
  */
  function _sendActuatorCommand(actuator, actuatorType, cb) {
   var that = this;
@@ -66,7 +65,6 @@ var ACTUATOR_CMD_RESPONSE_TIMEOUT_MS = 30000;
  *
  * @param  {object} response
  * @param  {number} time
- * @return
  */
 function _actuatorCommandResponseTestcase (response, time) {
   var error, sensorTypes;
@@ -118,7 +116,6 @@ function _actuatorCommandResponseTestcase (response, time) {
  *
  * @param  {array} statusArray
  * @param  {number} time
- * @return
  */
 function _sensorStatusTestcase (statusArray, time) {
   var that = this;
@@ -161,7 +158,6 @@ function _sensorStatusTestcase (statusArray, time) {
  *
  * @param  {object} sensorValues
  * @param  {number} time
- * @return
  */
 function _sensorValuesTestcase (sensorValues, time) {
   var that = this;
@@ -198,7 +194,6 @@ function _sensorValuesTestcase (sensorValues, time) {
  *
  * @param  {string} gatewayId
  * @param  {number} time
- * @return
  */
 function _gatewayIdTestcase(gatewayId, time) {
   var error;
@@ -217,7 +212,6 @@ function _gatewayIdTestcase(gatewayId, time) {
  *
  * @param  {string} apikey
  * @param  {number} time
- * @return
  */
 function _apikeyTestcase (apikey, time) {
   logger.info('apikey verifing');
@@ -241,7 +235,6 @@ function _apikeyTestcase (apikey, time) {
  *
  * @param  {number} keepalive
  * @param  {number} time
- * @return
  */
 function _keepaliveTestcase (keepalive, time) {
   logger.info('keepalive verifing');
@@ -271,7 +264,6 @@ function _keepaliveTestcase (keepalive, time) {
  *
  * @param  {object} willMessage
  * @param  {number} time
- * @return
  */
 function _willMessageTestcase (willMessage, time) {
   logger.info('willMessage verifing');
@@ -296,7 +288,6 @@ function _willMessageTestcase (willMessage, time) {
  *
  * @param  {boolean} cleanSession
  * @param  {number} time
- * @return
  */
 function _cleanSessionTestcase (cleanSession, time) {
   logger.info('cleanSession testcase running');
@@ -316,7 +307,6 @@ function _cleanSessionTestcase (cleanSession, time) {
  *
  * @constructor
  * @param  {string} gatewayId
- * @return
  */
 function MqttTestcases (gatewayId) {
   logger.info('new instance. gatewayId:%s', gatewayId);
@@ -332,7 +322,6 @@ util.inherits(MqttTestcases, events.EventEmitter);
 /**
  * getTestcases - get mqtt testcases
  *
- * @return
  */
 MqttTestcases.prototype.getTestcases = function () {
   return this.testcases;
@@ -341,7 +330,6 @@ MqttTestcases.prototype.getTestcases = function () {
 /**
  * _testcaseInit - initialize testcases
  *
- * @return
  */
 MqttTestcases.prototype._testcasesInit = function () {
   var that = this;
@@ -368,7 +356,6 @@ MqttTestcases.prototype._testcasesInit = function () {
  *
  * @param  {object} values
  * @param  {number} time
- * @return
  */
 MqttTestcases.prototype.sensorValues = function (values, time) {
   var that = this;
@@ -411,6 +398,7 @@ MqttTestcases.prototype._addMissingSensorsError = function (testcaseName) {
   }
   else {
     requiredSensorIds = _.map(sensors, 'id');
+    //TODO FIXME DELETE ACTUATOR
   }
 
   var testcasePassedSensors = _.map(results, function (sensor) {
@@ -459,7 +447,6 @@ MqttTestcases.prototype.getResults = function (testcaseName) {
  * @param  {string} error
  * @param  {object} receivedData
  * @param  {number} time
- * @return
  */
 MqttTestcases.prototype.setResults = function (testcaseName, error, receivedData, time) {
   if (error) {
@@ -475,7 +462,6 @@ MqttTestcases.prototype.setResults = function (testcaseName, error, receivedData
 /**
  * cleanHistory - clear testcases results
  *
- * @return
  */
 MqttTestcases.prototype.clearHistory = function  () {
   _.forEach(this.results, function (r) {
@@ -487,7 +473,6 @@ MqttTestcases.prototype.clearHistory = function  () {
  * sendActuatorCommands - send every actuators commands
  *
  * @param  {object} testcaseIntance
- * @return
  */
 MqttTestcases.prototype.sendActuatorCommands = function (testcaseIntance) {
   var that = testcaseIntance;

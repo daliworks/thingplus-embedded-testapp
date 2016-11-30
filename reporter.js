@@ -1,8 +1,43 @@
-var _ = require('lodash');
-var async = require('async');
-var colors = require('colors/safe');
-var open = require('open');
+var _ = require('lodash'),
+    async = require('async'),
+    colors = require('colors/safe'),
+    json2html = require('node-json2html'),
+    fs = require('fs'),
+    util = require('util');
+//var open = require('open');
 
+
+function html(report) {
+  var htmlDocument;
+  var transform = {
+    "result": [
+      {"<>":"h1", "html": report.summary.result},
+      {"<>":"div", "html": report.summary.tested + " tested, " + report.summary.passed + " passed, " + report.summary.failed + " failed, " + report.summary.na + " na."},
+      {"<>":"br"},
+      {"<>":"h4", "html": "mqtt"},
+      {"<>":"div", "html": function () {      }},
+    ],
+  };
+
+  htmlDocument = json2html.transform(report, transform.result);
+  _.mapKeys(report.mqtt, function(value, key) {
+    if (!_.isObject(value)) {
+      return;
+    }
+
+    var t = {"<>":"div", "html": function () {return util.format('- %s : %s', key, value.result) }};
+    htmlDocument += json2html.transform(report, t);
+
+    if (value.result === 'FAIL') {
+      t = {"<>":"div", "html": function () {return util.format('--- %s', JSON.stringify(value.failedHistory)) }};
+      htmlDocument += json2html.transform(null, t);
+    }
+  });
+
+  console.log(htmlDocument);
+  //TODO FIXME
+  fs.writeFileSync('report.html', htmlDocument, 'utf8');
+}
 
 /**
  * 
@@ -15,7 +50,7 @@ var open = require('open');
  * @param {any} cb
  * @returns
  */
-function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTestResult, restTestResult, cb) {
+function report(receivedMqttMsg, errorMqttMsg, mqttTestResult, restTestResult, cb) {
   var report = {};
 
   /**
@@ -39,45 +74,26 @@ function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTest
    * 
    * @param {any} done
    */
-  function errorIdsReport(done) {
-    report.errorIds = {};
-    report.errorIds.result = _.size(errorIds) ? "FAIL" : "PASS";
-    report.errorIds.failed = _.size(errorIds);
-    report.errorIds.failedHistory = errorIds;
-
-    done();
-  }
-
-  /**
-   * 
-   * 
-   * @param {any} done
-   */
   function mqttReport(done) {
     report.mqtt = {};
-    async.eachOf(mqttTestResult, function (tcHistory, tcName, asyncDone) {
-      /**
-       * 
-       * 
-       * @param {any} history
-       * @returns
-       */
-      var failedHistory = _.filter(tcHistory, function (history) {
-        return !history.result;
+    async.eachOf(mqttTestResult, function (results, testcaseName, asyncDone) {
+
+      report.mqtt[testcaseName] = {};
+      report.mqtt[testcaseName].checked = _.size(results);
+      report.mqtt[testcaseName].failedHistory = _.filter(results, function (r) {
+        return r.error;
       });
 
-      report.mqtt[tcName] = {};
-
-      if (_.size(tcHistory) === 0) {
-        report.mqtt[tcName].result = "N/A";
+      report.mqtt[testcaseName].failed = _.size(report.mqtt[testcaseName].failedHistory);
+      if (report.mqtt[testcaseName].checked === 0) {
+        report.mqtt[testcaseName].result = 'N/A';
+      }
+      else if (report.mqtt[testcaseName].failed) {
+        report.mqtt[testcaseName].result = 'FAIL';
       }
       else {
-        report.mqtt[tcName].result = _.size(failedHistory) ? "FAIL" : "PASS";
+        report.mqtt[testcaseName].result = 'PASS';
       }
-      report.mqtt[tcName].checked = _.size(tcHistory);
-      report.mqtt[tcName].failed = _.size(failedHistory);
-      report.mqtt[tcName].failedHistory = JSON.stringify(failedHistory);
-
       asyncDone();
     },
     function mqttTcSummary(err) {
@@ -101,6 +117,7 @@ function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTest
   function restReport(done) {
 
     report.rest = restTestResult;
+    console.log(restTestResult);
 
     return done();
   }
@@ -135,13 +152,18 @@ function report(mqttConnected, receivedMqttMsg, errorMqttMsg, errorIds, mqttTest
    */
   function tcReport(done) {
     console.log(report);
+
+html(report);
     done();
   }
 
+
+
   // START HERE 
-  async.series([errorMqttMsgReport, errorIdsReport, mqttReport, restReport, summary, tcReport], cb);
+  async.series([errorMqttMsgReport, mqttReport, restReport, summary, tcReport], cb);
 
   return;
 }
 
 module.exports =  report;
+

@@ -5,13 +5,14 @@ var MqttTestcase = require('./mqtt.js'),
     TcRest = require('./rest.js'),
     mqttParser = require('./mqtt-parser.js');
 
+
 /**
- * 
- * 
- * @param {any} config
+ * Testcases - testcase object
+ *
+ * @constructor
+ * @return
  */
-function Testcases (config) {
-  this.hardwareInfo = config;
+function Testcases () {
   this.mqtt = new MqttTestcase(config.gateway.id);
   this.rest = new TcRest(config);
   this.mqttParser = mqttParser;
@@ -19,4 +20,3 @@ function Testcases (config) {
 }
 
 module.exports = Testcases;
-

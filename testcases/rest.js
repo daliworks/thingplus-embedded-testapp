@@ -5,20 +5,13 @@ var _ = require('lodash'),
 var DEVICE_POST_TC_PREFIX = 'tcDevicePost-';
 var SENSOR_POST_TC_PREFIX = 'tcSensorPost-';
 
-/**
- * 
- * 
- * @param {any} tcName
- */
-function logStartTest(tcName) {
-  console.log('[TESTING] ' + tcName);
-}
 
 /**
- * 
- * 
- * @param {any} result
- * @param {any} reason
+ * logTestResult - print test result to console
+ *
+ * @param  {type} result description
+ * @param  {type} reason description
+ * @return {type}        description
  */
 function logTestResult(result, reason) {
   if (result) {
@@ -29,12 +22,13 @@ function logTestResult(result, reason) {
   }
 }
 
+
 /**
- * 
- * 
- * @param {any} deviceItem
- * @param {any} cb
- * @returns
+ * isDevicePostValid - verify deivce post body
+ *
+ * @param  {object} gatewayItem
+ * @param  {object} deviceItem
+ * @param  {object} cb
  */
 function isDevicePostValid(gatewayItem, deviceItem, cb) {
   var gatewayModel = db.findOne('gatewayModels', gatewayItem.model),
@@ -46,7 +40,7 @@ function isDevicePostValid(gatewayItem, deviceItem, cb) {
   _.forEach(deviceKeys, function (key) {
     if(!deviceItem[key]) {
       logger.error('[isDevicePostValid] missing %s. device item=', key, deviceItem);
-      return cb && cb('missing ' + key);      
+      return cb && cb('missing ' + key);
     }
   });
 
@@ -59,18 +53,19 @@ function isDevicePostValid(gatewayItem, deviceItem, cb) {
   // check model validation
   if (_.findIndex(deviceModels, {'id': deviceItem.model}) === -1) {
     logger.error('[isDevicePostValid] invalid model id. device item=', deviceItem);
-    return cb && cb('invalid model');    
+    return cb && cb('invalid model');
   }
 
   return cb && cb();
 }
 
+
 /**
- * 
- * 
- * @param {any} sensorInfo
- * @param {any} cb
- * @returns
+ * isSensorPostValid - verify sensor post body
+ *
+ * @param  {object} gatewayItem
+ * @param  {object} sensorItem
+ * @param  {function} cb
  */
 function isSensorPostValid(gatewayItem, sensorItem, cb) {
   var sensorDriverInfo;
@@ -80,10 +75,10 @@ function isSensorPostValid(gatewayItem, sensorItem, cb) {
   _.forEach(sensorKeys, function (key) {
     if(!sensorItem[key]) {
       logger.error('[isSensorPostValid] missing %s. device item=', key, sensorItem);
-      return cb && cb('missing ' + key);      
+      return cb && cb('missing ' + key);
     }
   });
-  
+
 
   //TODO FIXME  CHECK SENSORINFO VALIDATION HERE
 
@@ -91,7 +86,7 @@ function isSensorPostValid(gatewayItem, sensorItem, cb) {
   if (_.includes(gatewayItem.sensors, sensorItem.reqId)) {
     logger.error('[isSensorPostValid] duplicated reqId. sensor item=', deviceItem);
     return cb && cb('duplicated reqId');
-  }  
+  }
 
   // check sensorDriver
 
@@ -100,14 +95,10 @@ function isSensorPostValid(gatewayItem, sensorItem, cb) {
 }
 
 /**
- * 
- * 
- * @param {object} config
+ * TcRest - Rest testcase object
+ * @constructor
  */
-function TcRest (config) {
-  this.hardwareInfo = config;
-  this.errorId = [];
-  this.tcGeneration();
+function TcRest () {
   this.history = [];
   _.map(_.filter(_.keysIn(this), function (key) {
     return _.isFunction(this[key]) && _.startsWith(key, 'tc')}.bind(this)),
@@ -116,30 +107,15 @@ function TcRest (config) {
   }.bind(this));
 }
 
-/**
- * 
- */
-TcRest.prototype.tcGeneration = function() {
-  var that = this;
-
-  _.forEach(this.hardwareInfo.devices, function (device) {
-    that[DEVICE_POST_TC_PREFIX + device.id] = isDevicePostValid;
-
-    _.forEach(device.sensors, function (sensor) {
-      that[SENSOR_POST_TC_PREFIX + sensor.id] = isSensorPostValid;
-    });
-  });
-};
-
 
 /**
- * 
- * 
- * @param {any} tcInstance
- * @param {any} gatewayItem
- * @param {any} deviceItem
- * @param {any} time
- * @param {any} cb
+ * devicePost - verify device post body
+ *
+ * @param  {object} tcInstance
+ * @param  {object} gatewayItem
+ * @param  {object} deviceItem
+ * @param  {number} time
+ * @param  {function} cb
  */
 TcRest.prototype.devicePost = function (tcInstance, gatewayItem, deviceItem, time, cb) {
   var that = tcInstance;
@@ -147,8 +123,8 @@ TcRest.prototype.devicePost = function (tcInstance, gatewayItem, deviceItem, tim
   isDevicePostValid(gatewayItem, deviceItem, function (err) {
     var result = true, reason, tcName;
 
-    tcName = deviceItem.reqId ? 
-        DEVICE_POST_TC_PREFIX + deviceItem.reqId : DEVICE_POST_TC_PREFIX + 'unknown'; 
+    tcName = deviceItem.reqId ?
+        DEVICE_POST_TC_PREFIX + deviceItem.reqId : DEVICE_POST_TC_PREFIX + 'unknown';
 
     if (err) {
       result = false;
@@ -161,14 +137,15 @@ TcRest.prototype.devicePost = function (tcInstance, gatewayItem, deviceItem, tim
   });
 };
 
+
 /**
- * 
- * 
- * @param {any} tcInstance
- * @param {any} gatewayItem
- * @param {any} sensorItem
- * @param {any} time
- * @param {any} cb
+ * sensorPost - verify sensor post body
+ *
+ * @param  {object} tcInstance
+ * @param  {object} gatewayItem
+ * @param  {object} sensorItem
+ * @param  {number} time
+ * @param  {function} cb
  */
 TcRest.prototype.sensorPost = function (tcInstance, gatewayItem, sensorItem, time, cb) {
   var that = tcInstance;
@@ -176,8 +153,8 @@ TcRest.prototype.sensorPost = function (tcInstance, gatewayItem, sensorItem, tim
   isSensorPostValid(gatewayItem, sensorItem, function (err) {
     var result = true, reason, tcName;
 
-    tcName = sensorItem.reqId ? 
-        SENSOR_POST_TC_PREFIX + sensorItem.reqId : SENSOR_POST_TC_PREFIX + 'unknown'; 
+    tcName = sensorItem.reqId ?
+        SENSOR_POST_TC_PREFIX + sensorItem.reqId : SENSOR_POST_TC_PREFIX + 'unknown';
 
     if (err) {
       result = false;
@@ -190,14 +167,15 @@ TcRest.prototype.sensorPost = function (tcInstance, gatewayItem, sensorItem, tim
   });
 };
 
+
 /**
- * 
- * 
- * @param {any} tcName
- * @param {any} result
- * @param {any} time
- * @param {any} reason
- * @param {any} raw
+ * historySet - save testcase result
+ *
+ * @param  {string} tcName
+ * @param  {boolean} result
+ * @param  {number} time
+ * @param  {string} reason
+ * @param  {object} raw
  */
 TcRest.prototype.historySet = function (tcName, result, time, reason, raw) {
   var tcHistory;
@@ -222,11 +200,12 @@ TcRest.prototype.historySet = function (tcName, result, time, reason, raw) {
   this.history[tcName].push(tcHistory);
 };
 
+
 /**
- * 
- * 
- * @param {any} tcName
- * @returns
+ * historyGet - get testcase results
+ *
+ * @param  {string} tcName
+ * @return {object}
  */
 TcRest.prototype.historyGet = function (tcName) {
   //console.log(this.result);
@@ -240,29 +219,4 @@ TcRest.prototype.historyGet = function (tcName) {
   }
 };
 
-/**
- * 
- * 
- * @param {any} id
- * @param {any} time
- * @param {any} raw
- */
-TcRest.prototype.errorIdSet = function (id, time, raw) {
-  console.log('Invalid ID(' + id + ')');
-  this.errorId.push({'id': id, 'time': time, 'raw': raw});
-};
-
-/**
- * 
- * 
- * @returns
- */
-TcRest.prototype.errorIdGet = function () {
-
-  logger.info('[errorIdGet] test');
-
-  return this.errorId;
-};
-
 module.exports = TcRest;
-
