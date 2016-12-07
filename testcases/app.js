@@ -12,7 +12,7 @@ var MqttTestcase = require('./mqtt.js'),
  * @constructor
  * @return
  */
-function Testcases () {
+function Testcases (config) {
   this.mqtt = new MqttTestcase(config.gateway.id);
   this.rest = new TcRest(config);
   this.mqttParser = mqttParser;
