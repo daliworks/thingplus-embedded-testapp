@@ -1,0 +1,109 @@
+<%
+function getResultCode(result) {
+    if(result === 'N/A') {
+        return 'NA';
+    } else {
+        return result;
+    }
+}
+%>
+<div>
+    <div class="page-header">
+        <h2 style="margin-left: 20px">Report</h2>
+    </div>
+    <div class="" style="margin: 0 10px">
+        <h3>Summary</h3>
+        <table class="table table-responsive table-bordered">
+            <thead>
+            <th>result</th>
+            <th>tested</th>
+            <th>passed</th>
+            <th>failed</th>
+            <th>na</th>
+            </thead>
+            <tbody>
+            <%
+            var className = getResultCode(result.summary.result);
+            %>
+            <tr class="<%= className %>" >
+                <td> <%= result.summary.result %></td>
+                <td> <%= result.summary.tested %></td>
+                <td> <%= result.summary.passed %></td>
+                <td> <%= result.summary.failed %></td>
+                <td> <%= result.summary.na %></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div style="margin: 0 10px">
+        <h3>MQTT</h3>
+
+        <table class="table table-responsive table-bordered">
+            <thead>
+            <th>Name</th>
+            <th>result</th>
+            <th>checked</th>
+            <th>failed</th>
+            <!--<th>failedHistory</th>-->
+            </thead>
+            <tbody>
+            <%
+            var mqttTestList = result.mqtt && _.keys(result.mqtt);
+            _.forEach(mqttTestList, function(key) {
+                if(!_.isObject(result.mqtt[key])) return true;
+                var className = getResultCode(result.mqtt[key].result);
+            %>
+            <tr class="<%= className %>" >
+                <td> <%= key %></td>
+                <td> <%= result.mqtt[key].result %></td>
+                <td> <%= result.mqtt[key].checked %></td>
+                <td> <%= result.mqtt[key].failed %></td>
+                <!--<td> <%= result.mqtt[key].failedHistory %></td>-->
+            </tr>
+            <%
+            });
+            %>
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div style="margin: 0 10px">
+        <h3>REST</h3>
+
+        <table class="table table-responsive table-bordered">
+            <thead>
+            <th>Name</th>
+            <th>result</th>
+            <th>checked</th>
+            <th>failed</th>
+            <!--<th>failedHistory</th>-->
+            </thead>
+            <tbody>
+            <%
+            var restTestList = result.rest && _.keys(result.rest);
+            _.forEach(restTestList, function(key) {
+                if(!_.isObject(result.rest[key])) return true;
+                var className = getResultCode(result.rest[key].result);
+            %>
+            <tr class="<%= className %>" >
+                <td> <%= key %></td>
+                <td> <%= result.rest[key].result %></td>
+                <td> <%= result.rest[key].checked %></td>
+                <td> <%= result.rest[key].failed %></td>
+                <!--<td> <%= result.rest[key].failedHistory %></td>-->
+            </tr>
+            <%
+            });
+            %>
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>

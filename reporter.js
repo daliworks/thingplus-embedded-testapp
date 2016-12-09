@@ -2,41 +2,28 @@ var _ = require('lodash'),
     async = require('async'),
     colors = require('colors/safe'),
     json2html = require('node-json2html'),
+    ejs = require('ejs'),
     fs = require('fs'),
     util = require('util');
 //var open = require('open');
 
 
 function html(report) {
-  var htmlDocument;
-  var transform = {
-    "result": [
-      {"<>":"h1", "html": report.summary.result},
-      {"<>":"div", "html": report.summary.tested + " tested, " + report.summary.passed + " passed, " + report.summary.failed + " failed, " + report.summary.na + " na."},
-      {"<>":"br"},
-      {"<>":"h4", "html": "mqtt"},
-      {"<>":"div", "html": function () {      }},
-    ],
-  };
+  try {
 
-  htmlDocument = json2html.transform(report, transform.result);
-  _.mapKeys(report.mqtt, function(value, key) {
-    if (!_.isObject(value)) {
-      return;
-    }
 
-    var t = {"<>":"div", "html": function () {return util.format('- %s : %s', key, value.result) }};
-    htmlDocument += json2html.transform(report, t);
+    var template = fs.readFileSync(__dirname + '/html.template.ejs', 'utf8');
+    var html = fs.readFileSync(__dirname + '/html.template.html', 'utf8');
+    var compiledTemplate = ejs.compile(template)({result:report, _: _});
+    var index = html.indexOf('<div id="target">');
+    var output = [html.slice(0, index), compiledTemplate, html.slice(index)].join('');
+    fs.writeFileSync('report.html', output);
+  } catch (e) {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>", e);
+  }
 
-    if (value.result === 'FAIL') {
-      t = {"<>":"div", "html": function () {return util.format('--- %s', JSON.stringify(value.failedHistory)) }};
-      htmlDocument += json2html.transform(null, t);
-    }
-  });
 
-  console.log(htmlDocument);
-  //TODO FIXME
-  fs.writeFileSync('report.html', htmlDocument, 'utf8');
+
 }
 
 /**
