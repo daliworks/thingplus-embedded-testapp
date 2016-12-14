@@ -69,6 +69,7 @@ var ACTUATOR_CMD_RESPONSE_TIMEOUT_MS = 30000;
 function _actuatorCommandResponseTestcase (response, time) {
   var error, sensorTypes;
   var sentActuatorCommand = this.sentActuatorCommands[response.id];
+  var that = this;
 
   if (!time) {
     time = Date.now();
