@@ -395,11 +395,16 @@ MqttTestcases.prototype._addMissingSensorsError = function (testcaseName) {
   var results = _.cloneDeep(this.results[testcaseName]);
 
   if (testcaseName === 'status') {
-    requiredSensorIds = _.concat(this.gatewayId, _.map(sensors, 'id'));
+    requiredSensorIds = _.concat(this.gatewayId, _.map(sensors, function (sensor) {
+      if (sensor.category === 'sensor') {
+        return sensor.id;
+      }}));
   }
   else {
-    requiredSensorIds = _.map(sensors, 'id');
-    //TODO FIXME DELETE ACTUATOR
+    requiredSensorIds = _.map(sensors, function (sensor) {
+      if (sensor.category === 'sensor') {
+        return sensor.id;
+      }});
   }
 
   var testcasePassedSensors = _.map(results, function (sensor) {
@@ -408,6 +413,9 @@ MqttTestcases.prototype._addMissingSensorsError = function (testcaseName) {
   var notTestedSensorIds = _.difference(requiredSensorIds, testcasePassedSensors);
 
   _.forEach(notTestedSensorIds, function (sensorId) {
+    if (!sensorId) {
+      return;
+    }
     error = util.format('%s not tested', sensorId);
     results.push({'error': error, 'data': {'id': sensorId}, 'time': Date.now()});
   });

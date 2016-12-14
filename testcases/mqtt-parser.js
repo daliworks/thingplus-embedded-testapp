@@ -93,7 +93,7 @@ function makeValueJson(id, values) {
 
   var value = [];
   _.map(_.chunk(values, 2), function (v) {
-    if (!v[0] || !v[1]) {
+    if (v[0] === undefined || v[1] === undefined) {
       throw new Error('Missing values');
     }
 

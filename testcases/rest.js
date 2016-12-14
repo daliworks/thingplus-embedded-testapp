@@ -213,8 +213,6 @@ TcRest.prototype.historyGet = function (tcName) {
     return this.history[tcName];
   }
   else {
-
-    logger.error('>>>>>> history', this.history);
     return this.history;
   }
 };
