@@ -2021,5 +2021,19 @@
       "frequency": "y"
     },
     "category": "sensor"
+  },
+  {
+    "id": "strain",
+    "unit": "um/m",
+    "type": "number",
+    "decimalPlace": 2,
+    "chart": {
+      "drawable": true,
+      "dataType": "series"
+    },
+    "stats": {
+      "funcs": ["avg"]
+    },
+    "category": "sensor"
   }
 ]

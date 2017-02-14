@@ -629,7 +629,9 @@
       "jsonrpcElectricPower": ["electricPower"],
       "jsonrpcElectricEnergy": ["electricEnergy"],
       "jsonrpcState": ["state"],
-      "jsonrpcPh": ["ph"]
+      "jsonrpcPh": ["ph"],
+      "jsonrpcStrain": ["strain"],
+      "jsonrpcVoltageEvent": ["voltage"]
     },
     "models": [
       "jsonrpcNumber",
@@ -675,7 +677,9 @@
       "jsonrpcElectricPower",
       "jsonrpcElectricEnergy",
       "jsonrpcState",
-      "jsonrpcPh"
+      "jsonrpcPh",
+      "jsonrpcStrain",
+      "jsonrpcVoltageEvent"
     ],
     "onChange": {
       "jsonrpcDi": true,
@@ -684,7 +688,14 @@
       "jsonrpcCountEvent": true,
       "jsonrpcTag": true,
       "jsonrpcReader": true,
-      "jsonrpcLight": false
+      "jsonrpcLight": false,
+      "jsonrpcVoltageEvent": true
+    },
+    "unit": {
+      "jsonrpcVoltageEvent": "Volt"
+    },
+    "decimalPlace": {
+      "jsonrpcVoltageEvent": 2
     },
     "recommendedInterval": 60000,
     "discoverable": true,
@@ -849,7 +860,7 @@
       "libeliumLocation": ["location"],
       "libeliumBatteryGauge": ["batteryGauge"],
       "libeliumAccelerometer": ["accelerometer"],
-      "libeliumPH": ["pH"],
+      "libeliumPH": ["ph"],
       "libeliumDust": ["dust"],
       "libeliumCurrent": ["current"],      
       "libeliumTimeDuration": ["timeDuration"],
@@ -871,7 +882,8 @@
       "libeliumTempCelsPro": ["temperature"],
       "libeliumTempFahr": ["temperature"],
       "libeliumHumiPro": ["humidity"],
-      "libeliumRainMmh": ["rain"]
+      "libeliumRainMmh": ["rain"],
+      "libeliumPHPro": ["ph"]
     },
     "models": [
       "libeliumNumber",
@@ -920,7 +932,8 @@
       "libeliumTempCelsPro",
       "libeliumTempFahr",
       "libeliumHumiPro",
-      "libeliumRainMmh"
+      "libeliumRainMmh",
+      "libeliumPHPro"
     ],
     "discoverable": false,
     "addressable": true,
@@ -941,7 +954,8 @@
       "libeliumNumberPPM": "ppm",
       "libeliumCh4Pro": "%",
       "libeliumTempFahr": "°F",
-      "libeliumRainMmh": "mm/h"
+      "libeliumRainMmh": "mm/h",
+      "libeliumPHPro": ""
     },
     "decimalPlace": {
       "libeliumCo": 3,
@@ -963,7 +977,8 @@
       "libeliumTempCelsPro": 3,
       "libeliumTempFahr": 2,
       "libeliumHumiPro": 2,
-      "libeliumDust": 4
+      "libeliumDust": 4,
+      "libeliumPHPro": 3
     },
     "descriptions": {
       "models":{
@@ -1091,14 +1106,20 @@
       "nthingHumi" : ["humidity"],
       "nthingLight": ["light"],
       "nthingSpeed": ["sSpeed"],
-      "nthingBatteryGauge": ["batteryGauge"]
+      "nthingBatteryGauge": ["batteryGauge"],
+      "nthingSoilMoisture": ["soilMoisture"],
+      "nthingCo2": ["co2"],
+      "nthingOnoff": ["onoff"]
     },
     "models": [
       "nthingTemp",
       "nthingHumi",
       "nthingLight",
       "nthingSpeed",
-      "nthingBatteryGauge"
+      "nthingBatteryGauge",
+      "nthingSoilMoisture",
+      "nthingCo2",
+      "nthingOnoff"
     ],
     "discoverable": false,
     "addressable": false,
@@ -1122,11 +1143,15 @@
     "idTemplate": "{type}-{gatewayId}-{sequence}",
     "dataTypes": {
       "nthingWaterCtrl": ["waterController"],
-      "nthingStringActuator": ["stringActuator"]
+      "nthingStringActuator": ["stringActuator"],
+      "nthingSwitch": [ "powerSwitch" ],
+      "nthingLed": ["led"]
     },
     "models": [
       "nthingWaterCtrl",
-      "nthingStringActuator"
+      "nthingStringActuator",
+      "nthingSwitch",
+      "nthingLed"
     ],
     "discoverable": false,
     "addressable": false,
@@ -2070,25 +2095,25 @@
         "remoteLockOff": [],
         "set": [
           {
-            "name": "cutoffValue",
+            "name": "cutoffvalue",
             "type": "number",
             "required": true,
             "min": 0,
             "max": 3000,
-            "unit": "W"
+            "unit": "w"
           }
         ],
         "get": []
       },
-      "ezexSwitch": {
+      "ezexswitch": {
         "on": [],
         "off": []
       },
-      "ezexLockUnlock": {
+      "ezexlockunlock": {
         "lock": [],
         "unlock": []
       },
-      "ezexTimer": {
+      "ezextimer": {
         "set": [
           {
             "name": "duration",
@@ -2110,6 +2135,116 @@
     "networkDrivers": {
       "jsonrpc": "jsonrpcActuator"
     },
+    "category": "actuator"
+  },
+  {
+    "id": "advanwiseVoc",
+    "displayName": "Voc",
+    "driverName": "advanwiseVoc",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}-{sequence}",
+    "dataTypes": [
+      "voc"
+    ],
+    "models": [
+      "advanwiseVoc"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "advanwiseSensor",
+    "displayName": "Advanwise Sensor",
+    "driverName": "advanwiseSensor",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}",
+    "dataTypes": {
+      "advanwiseVoc": ["voc"],
+      "advanwiseAccelerometer": ["accelerometer"],
+      "advanwiseCo2": ["co2"],
+      "advanwiseHumidity": ["humidity"],
+      "advanwiseTemperature": ["temperature"]
+    },
+    "models": [
+      "advanwiseVoc"
+    ],
+    "unit": {
+      "advanwiseVoc": "ppb"
+    },
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "sensor"
+  },
+  {
+    "id": "advanwiseLed",
+    "displayName": "Led",
+    "driverName": "advanwiseLed",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}",
+    "dataTypes": [
+      "led"
+    ],
+    "models": [
+      "advanwiseLed"
+    ],
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
+    "category": "actuator"
+  },
+  {
+    "id": "advanwiseActuator",
+    "displayName": "Advanwise Actuator",
+    "driverName": "advanwiseActuator",
+    "idTemplate": "{gatewayId}-{deviceAddress}-{type}",
+    "dataTypes": {
+      "advanwiseLed": ["led"]
+    },
+    "models": [
+      "advanwiseLed"
+    ],
+    "contentType": {
+      "advanwiseLed": {
+        "properties": {
+          "cmd": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": ["success", "error"]
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "display": ["cmd"]
+      }
+    },
+    "commands": {
+      "advanwiseLed": {
+        "on": [],
+        "off": []
+      }
+    },
+    "discoverable": false,
+    "addressable": true,
+    "supportedNetworks": [
+      "daliworks"
+    ],
     "category": "actuator"
   }
 ]

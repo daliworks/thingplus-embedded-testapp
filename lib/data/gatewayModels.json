@@ -2897,7 +2897,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWICA",
             "type": "number",
             "category": "sensor"
@@ -2905,7 +2905,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWIFL",
             "type": "number",
             "category": "sensor"
@@ -2913,7 +2913,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWIFB",
             "type": "number",
             "category": "sensor"
@@ -2921,7 +2921,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWINO",
             "type": "number",
             "category": "sensor"
@@ -2929,7 +2929,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWIBR",
             "type": "number",
             "category": "sensor"
@@ -2937,7 +2937,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWICL",
             "type": "number",
             "category": "sensor"
@@ -2945,7 +2945,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWICU",
             "type": "number",
             "category": "sensor"
@@ -2953,7 +2953,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWIIO",
             "type": "number",
             "category": "sensor"
@@ -2961,7 +2961,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWIPB",
             "type": "number",
             "category": "sensor"
@@ -2969,7 +2969,7 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumNumber",
+            "model": "libeliumNumberPPM",
             "sequence": "SWIAG",
             "type": "number",
             "category": "sensor"
@@ -2977,9 +2977,9 @@
           {
             "network": "libelium",
             "driverName": "libeliumSensor",
-            "model": "libeliumPH",
-            "sequence": "PH",
-            "type": "pH",
+            "model": "libeliumPHPro",
+            "sequence": "SWIPH",
+            "type": "ph",
             "category": "sensor"
           }
         ],
@@ -3053,7 +3053,7 @@
             "driverName": "libeliumSensor",
             "model": "libeliumPH",
             "sequence": "PH",
-            "type": "pH",
+            "type": "ph",
             "category": "sensor"
           },
           {
@@ -3061,7 +3061,7 @@
             "driverName": "libeliumSensor",
             "model": "libeliumPH",
             "sequence": "PH_A",
-            "type": "pH",
+            "type": "ph",
             "category": "sensor"
           },
           {
@@ -3069,7 +3069,7 @@
             "driverName": "libeliumSensor",
             "model": "libeliumPH",
             "sequence": "PH_B",
-            "type": "pH",
+            "type": "ph",
             "category": "sensor"
           },
           {
@@ -3077,7 +3077,7 @@
             "driverName": "libeliumSensor",
             "model": "libeliumPH",
             "sequence": "PH_C",
-            "type": "pH",
+            "type": "ph",
             "category": "sensor"
           },
           {
@@ -4547,10 +4547,50 @@
           },
           {
             "network": "nthing",
+            "driverName": "nthingSensor",
+            "model": "nthingSoilMoisture",
+            "sequence": "1",
+            "type": "soilMoisture",
+            "category": "sensor"
+          },
+          {
+            "network": "nthing",
+            "driverName": "nthingSensor",
+            "model": "nthingCo2",
+            "sequence": "1",
+            "type": "co2",
+            "category": "sensor"
+          },
+          {
+            "network": "nthing",
+            "driverName": "nthingSensor",
+            "model": "nthingOnoff",
+            "sequence": "1",
+            "type": "onoff",
+            "category": "sensor"
+          },
+          {
+            "network": "nthing",
             "driverName": "nthingActuator",
             "model": "nthingStringActuator",
             "sequence": "1",
             "type": "stringActuator",
+            "category": "actuator"
+          },
+          {
+            "network": "nthing",
+            "driverName": "nthingActuator",
+            "model": "nthingSwitch",
+            "sequence": "1",
+            "type": "powerSwitch",
+            "category": "actuator"
+          },
+          {
+            "network": "nthing",
+            "driverName": "nthingActuator",
+            "model": "nthingLed",
+            "sequence": "1",
+            "type": "led",
             "category": "actuator"
           }
         ],
@@ -7398,6 +7438,13 @@
             "model": "jsonrpcPh",
             "type": "ph",
             "category": "sensor"
+          },
+          {
+            "network": "jsonrpc",
+            "driverName": "jsonrpcSensor",
+            "model": "jsonrpcVoltageEvent",
+            "type": "voltage",
+            "category": "sensor"
           }
         ],
         "max": 1
@@ -9691,6 +9738,168 @@
         ],
         "max": 1
       }      
+    ]
+  },
+  {
+    "id": "49",
+    "vendor": "HANBACK",
+    "model": "hanbackRaspberryPi",
+    "displayName": "Hanback Raspberry Pi",
+    "deviceMgmt": {
+      "reportInterval": {
+        "show": "y",
+        "change": "y"
+      },
+      "DM": {
+        "poweroff": {
+          "support": "n"
+        },
+        "reboot": {
+          "support": "n"
+        },
+        "restart": {
+          "support": "y"
+        },
+        "swUpdate": {
+          "support": "y"
+        },
+        "swInfo": {
+          "support": "y"
+        },
+        "log": {
+          "support": "y"
+        }
+      }
+    },
+    "deviceModels": [
+      {
+        "id": "jsonrpcFullV1.0",
+        "displayName": "Hanback Device",
+        "idTemplate": "{gatewayId}-{deviceAddress}",
+        "discoverable": "y",
+        "sensors": [
+          {
+            "network": "jsonrpc",
+            "driverName": "jsonrpcSensor",
+            "model": "jsonrpcTemp",
+            "type": "temperature",
+            "category": "sensor"
+          },
+          {
+            "network": "jsonrpc",
+            "driverName": "jsonrpcSensor",
+            "model": "jsonrpcVoltageEvent",
+            "type": "voltage",
+            "category": "sensor"
+          },
+          {
+            "network": "jsonrpc",
+            "driverName": "jsonrpcSensor",
+            "model": "jsonrpcDi",
+            "type": "onoff",
+            "category": "sensor"
+          },
+          {
+            "network": "jsonrpc",
+            "driverName": "jsonrpcSensor",
+            "model": "jsonrpcStrain",
+            "type": "strain",
+            "category": "sensor"
+          }
+        ],
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "50",
+    "vendor": "AdvanWISE",
+    "model": "SRG-P201",
+    "displayName": "SRG-P201",
+    "idFormat": "eui64",
+    "reportInterval": "60000",
+    "deviceMgmt": {
+      "reportInterval": {
+        "show": "y",
+        "change": "y"
+      },
+      "DM": {
+        "poweroff": {
+          "support": "n"
+        },
+        "reboot": {
+          "support": "n"
+        },
+        "restart": {
+          "support": "y"
+        },
+        "swUpdate": {
+          "support": "y"
+        },
+        "swInfo": {
+          "support": "y"
+        }
+      }
+    },
+    "deviceModels": [
+      {
+        "id": "LoRaNode",
+        "displayName": "LoRa Node",
+        "idTemplate": "{gatewayId}-{deviceAddress}",
+        "discoverable": "n",
+        "addressable": "y",
+        "sensors": [
+          {
+            "network": "daliworks",
+            "driverName": "advanwiseSensor",
+            "model": "advanwiseTemperature",
+            "sequence": "0",
+            "type": "temperature",
+            "category": "sensor"
+          },
+          {
+            "network": "daliworks",
+            "driverName": "advanwiseSensor",
+            "model": "advanwiseHumidity",
+            "sequence": "0",
+            "type": "humidity",
+            "category": "sensor"
+          },
+          {
+            "network": "daliworks",
+            "driverName": "advanwiseSensor",
+            "model": "advanwiseCo2",
+            "sequence": "0",
+            "type": "co2",
+            "category": "sensor"
+          },
+          {
+            "network": "daliworks",
+            "driverName": "advanwiseSensor",
+            "model": "advanwiseVoc",
+            "sequence": "0",
+            "type": "voc",
+            "category": "sensor"
+          },
+          {
+            "network": "daliworks",
+            "driverName": "advanwiseSensor",
+            "model": "advanwiseAccelerometer",
+            "sequence": "0",
+            "type": "accelerometer",
+            "category": "sensor"
+          },
+          {
+            "network": "daliworks",
+            "driverName": "advanwiseActuator",
+            "model": "advanwiseLed",
+            "sequence": "0",
+            "type": "led",
+            "category": "actuator"
+          }
+        ],
+        "max": 5
+      }
     ]
   }
 ]
